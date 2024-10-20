@@ -1,4 +1,67 @@
-ici les boucles de rétro_actions
+# Ici une boucle de rétro actions
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Fréquences cérébrales (en Hz) pour simuler différents types d'ondes cérébrales
+brain_frequencies = {
+    "delta": 2.0,   # Onde Delta (sommeil profond)
+    "theta": 5.0,   # Onde Thêta (méditation, relaxation)
+    "alpha": 10.0,  # Onde Alpha (relaxation légère)
+    "beta": 20.0,   # Onde Bêta (concentration, éveil)
+    "gamma": 40.0   # Onde Gamma (activité cognitive intense)
+}
 
-..en cours.. 
+# Fonction pour générer une onde cérébrale sinusoïdale
+def generate_brain_wave(frequency, duration, sample_rate=44100):
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    wave = np.sin(2 * np.pi * frequency * t)
+    return t, wave
+
+# Simuler des boucles de rétroaction dans le cerveau
+def simulate_brain_feedback(brain_wave_frequency, duration, cycles, feedback_strength=0.5, sample_rate=44100):
+    t, brain_wave = generate_brain_wave(brain_wave_frequency, duration, sample_rate)
+    feedback_waves = [brain_wave]  # L'onde initiale du cerveau
+
+    # Boucle de rétroaction
+    for cycle in range(cycles):
+        # La nouvelle onde est modifiée par l'onde précédente avec une force de rétroaction
+        new_wave = feedback_waves[-1] + feedback_strength * np.sin(2 * np.pi * brain_wave_frequency * np.arange(len(brain_wave)) / sample_rate)
+        feedback_waves.append(new_wave)
+
+    return t, feedback_waves
+
+# Paramètres de simulation
+brain_wave_type = "alpha"  # Choisissez le type d'onde cérébrale : delta, theta, alpha, beta, gamma
+brain_wave_frequency = brain_frequencies[brain_wave_type]
+duration = 2.0  # Durée en secondes
+cycles = 5  # Nombre de cycles de rétroaction
+feedback_strength = 0.5  # Force de la rétroaction
+
+# Exécuter la simulation avec rétroaction
+t, feedback_waves = simulate_brain_feedback(brain_wave_frequency, duration, cycles, feedback_strength)
+
+# Affichage des résultats
+plt.figure(figsize=(10, 8))
+
+# Afficher l'onde cérébrale initiale et les ondes après chaque cycle de rétroaction
+for i, wave in enumerate(feedback_waves):
+    plt.subplot(len(feedback_waves), 1, i + 1)
+    plt.plot(t, wave, label=f"Wave After Cycle {i}", color='b' if i == 0 else 'r')
+    plt.title(f"Brain Wave After Cycle {i} - {brain_wave_type.capitalize()} Frequency")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+# Explication du script :
+
+1. Fréquences cérébrales : Nous avons ajouté plusieurs types d'ondes cérébrales courantes (delta, thêta, alpha, bêta, gamma), qui correspondent à différents états d'activité cérébrale.
+
+2. Boucles de rétroaction : Les boucles sont utilisées pour renvoyer l'onde dans le système, ce qui simule des phénomènes cérébraux où les signaux sont renvoyés et modifiés au fur et à mesure des cycles. Chaque cycle ajoute une perturbation basée sur l'onde originale, ajustée par une force de rétroaction.
+
+3. Simulation de phénomènes cérébraux : En ajustant les paramètres comme la force de la rétroaction ou le nombre de cycles, nous pouvons modéliser des comportements cérébraux comme la répétition des pensées, les cycles d'apprentissage, ou les processus de consolidation.
+
+Vous pouvez choisir parmi les différentes fréquences cérébrales et modifier le nombre de cycles ou la force de rétroaction pour voir comment cela influence la simulation.
+
