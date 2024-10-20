@@ -1,4 +1,7 @@
-ici les scripts pour modeliser les differentes ondes émises et reçues par le cerveau.
-
-
-..en cours..
+# Ici les scripts pour modeliser les differentes ondes émises et reçues par le cerveau.
+# Les differentes ondes :
+# Onde Delta (sommeil profond) "delta": 2.0,
+# Onde Thêta (méditation, relaxation) "theta": 5.0,
+# Onde Alpha (relaxation légère) "alpha": 10.0,  
+# Onde Bêta (concentration, éveil) "beta": 20.0,   
+# Onde Gamma (activité cognitive intense) "gamma": 40.0
