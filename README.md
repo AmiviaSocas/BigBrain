@@ -1,4 +1,5 @@
 # BigBrain  
+This is a free project
 Goal is to encode a brain
 Simulations can be adjusted (waves, transmitters, receivers, loops, etc..).
 We'll work on encoding all the functions from now on.
