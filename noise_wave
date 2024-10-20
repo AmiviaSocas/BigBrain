@@ -1,0 +1,30 @@
+# Ici script onde avec bruit aléatoire :
+mport numpy as np
+import matplotlib.pyplot as plt
+
+# Fonction pour générer une onde cérébrale avec du bruit aléatoire
+def generate_wave_with_noise(frequency, duration, noise_level=0.1, sample_rate=44100):
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    wave = np.sin(2 * np.pi * frequency * t)
+   
+    # Ajouter du bruit aléatoire (normalement distribué) à l'onde
+    noise = np.random.normal(0, noise_level, wave.shape)
+    noisy_wave = wave + noise
+   
+    return t, noisy_wave
+
+# Paramètres de l'onde et du bruit
+frequency = 10.0  # Fréquence de l'onde cérébrale (onde alpha)
+duration = 2.0  # Durée en secondes
+noise_level = 0.3  # Niveau du bruit ajouté
+
+# Générer l'onde avec du bruit
+t, noisy_wave = generate_wave_with_noise(frequency, duration, noise_level)
+
+# Afficher le résultat
+plt.plot(t, noisy_wave, label='Wave with Noise')
+plt.title('Brain Wave with Noise Interference')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.show()
