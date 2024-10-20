@@ -1,4 +1,4 @@
-# Ici script onde avec bruit aléatoire :
+# Ici script onde avec bruit aléatoire ou "Interference".
 mport numpy as np
 import matplotlib.pyplot as plt
 
