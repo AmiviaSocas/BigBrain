@@ -56,12 +56,7 @@ plt.tight_layout()
 plt.show()
 
 # Explication du script :
-
-1. Fréquences cérébrales : Nous avons ajouté plusieurs types d'ondes cérébrales courantes (delta, thêta, alpha, bêta, gamma), qui correspondent à différents états d'activité cérébrale.
-
-2. Boucles de rétroaction : Les boucles sont utilisées pour renvoyer l'onde dans le système, ce qui simule des phénomènes cérébraux où les signaux sont renvoyés et modifiés au fur et à mesure des cycles. Chaque cycle ajoute une perturbation basée sur l'onde originale, ajustée par une force de rétroaction.
-
-3. Simulation de phénomènes cérébraux : En ajustant les paramètres comme la force de la rétroaction ou le nombre de cycles, nous pouvons modéliser des comportements cérébraux comme la répétition des pensées, les cycles d'apprentissage, ou les processus de consolidation.
-
-Vous pouvez choisir parmi les différentes fréquences cérébrales et modifier le nombre de cycles ou la force de rétroaction pour voir comment cela influence la simulation.
-
+# 1. Fréquences cérébrales : Nous avons ajouté plusieurs types d'ondes cérébrales courantes (delta, thêta, alpha, bêta, gamma), qui correspondent à différents états d'activité cérébrale.
+# 2. Boucles de rétroaction : Les boucles sont utilisées pour renvoyer l'onde dans le système, ce qui simule des phénomènes cérébraux où les signaux sont renvoyés et modifiés au fur et à mesure des cycles. Chaque cycle ajoute une perturbation basée sur l'onde originale, ajustée par une force de rétroaction.
+# 3. Simulation de phénomènes cérébraux : En ajustant les paramètres comme la force de la rétroaction ou le nombre de cycles, nous pouvons modéliser des comportements cérébraux comme la répétition des pensées, les cycles d'apprentissage, ou les processus de consolidation.
+# Vous pouvez choisir parmi les différentes fréquences cérébrales et modifier le nombre de cycles ou la force de rétroaction pour voir comment cela influence la simulation.
