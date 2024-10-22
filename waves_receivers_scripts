@@ -1,4 +1,19 @@
-ici les scripts des differents récepteurs du cerveau.
+# Récepteur
+# Exemple d'intégration avec une onde alpha
+t, alpha_wave = generate_alpha_wave(frequency=10.0, duration=2.0, sample_rate=44100)  # Générer l'onde alpha
 
+# Émet l'onde avec amplification
+amplified_alpha_wave = emit_wave(alpha_wave, amplification=1.5)  # Amplifier l'onde
 
-..en cours..
+# Réception de l'onde amplifiée
+received_alpha_wave = receive_wave(amplified_alpha_wave)  # Récepteur reçoit l'onde
+
+# Affichage de l'onde reçue
+import matplotlib.pyplot as plt
+plt.plot(t, received_alpha_wave, label='Received Alpha Wave')
+plt.title('Received Alpha Wave (Amplified 10 Hz)')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.legend()
+plt.show()
