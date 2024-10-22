@@ -1,1 +1,26 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Fonction pour générer une onde thêta (en Hz)
+def generate_theta_wave(frequency=6.0, duration=2.0, sample_rate=44100):
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    theta_wave = np.sin(2 * np.pi * frequency * t)
+    return t, theta_wave
+
+# Paramètres de l'onde thêta
+frequency = 6.0  # Fréquence de l'onde thêta (4 - 8 Hz)
+duration = 2.0  # Durée en secondes
+sample_rate = 44100  # Échantillonnage
+
+# Générer l'onde thêta
+t, theta_wave = generate_theta_wave(frequency, duration, sample_rate)
+
+# Afficher l'onde thêta
+plt.plot(t, theta_wave, label='Theta Wave (6 Hz)')
+plt.title('Theta Wave (6 Hz) - Méditation et Créativité')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.legend()
+plt.show()
 
