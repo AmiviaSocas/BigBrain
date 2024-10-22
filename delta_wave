@@ -1,1 +1,26 @@
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Fonction pour générer une onde delta (en Hz)
+def generate_delta_wave(frequency=3.0, duration=2.0, sample_rate=44100):
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    delta_wave = np.sin(2 * np.pi * frequency * t)
+    return t, delta_wave
+
+# Paramètres de l'onde delta
+frequency = 3.0  # Fréquence de l'onde delta (0.5 - 4 Hz)
+duration = 2.0  # Durée en secondes
+sample_rate = 44100  # Échantillonnage
+
+# Générer l'onde delta
+t, delta_wave = generate_delta_wave(frequency, duration, sample_rate)
+
+Onde Delta
+# Afficher l'onde delta
+plt.plot(t, delta_wave, label='Delta Wave (3 Hz)')
+plt.title('Delta Wave (3 Hz) - Sommeil Profond')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.legend()
+plt.show()
