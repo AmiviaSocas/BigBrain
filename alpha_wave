@@ -1,1 +1,25 @@
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Fonction pour générer une onde alpha (en Hz)
+def generate_alpha_wave(frequency=10.0, duration=2.0, sample_rate=44100):
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    alpha_wave = np.sin(2 * np.pi * frequency * t)
+    return t, alpha_wave
+
+# Paramètres de l'onde alpha
+frequency = 10.0  # Fréquence de l'onde alpha (8 - 12 Hz)
+duration = 2.0  # Durée en secondes
+sample_rate = 44100  # Échantillonnage
+
+# Générer l'onde alpha
+t, alpha_wave = generate_alpha_wave(frequency, duration, sample_rate)
+
+# Afficher l'onde alpha
+plt.plot(t, alpha_wave, label='Alpha Wave (10 Hz)')
+plt.title('Alpha Wave (10 Hz) - Relaxation')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.legend()
+plt.show()
