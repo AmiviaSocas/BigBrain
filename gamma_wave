@@ -1,1 +1,25 @@
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Fonction pour générer une onde gamma (en Hz)
+def generate_gamma_wave(frequency=40.0, duration=2.0, sample_rate=44100):
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    gamma_wave = np.sin(2 * np.pi * frequency * t)
+    return t, gamma_wave
+
+# Paramètres de l'onde gamma
+frequency = 40.0  # Fréquence de l'onde gamma (30 - 100 Hz)
+duration = 2.0  # Durée en secondes
+sample_rate = 44100  # Échantillonnage
+
+# Générer l'onde gamma
+t, gamma_wave = generate_gamma_wave(frequency, duration, sample_rate)
+
+# Afficher l'onde gamma
+plt.plot(t, gamma_wave, label='Gamma Wave (40 Hz)')
+plt.title('Gamma Wave (40 Hz) - Processus Cognitifs Complexes')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.legend()
+plt.show()
