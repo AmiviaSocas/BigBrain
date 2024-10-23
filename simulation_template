@@ -1,0 +1,36 @@
+# Importer les modules nécessaires pour les ondes et stimuli
+from ondes_cerebrales.generate_alpha_wave import generate_alpha_wave
+from stimuli_externes.generate_desynchronized_wave import generate_desynchronized_wave
+from modulateurs.amplitude_modulation import amplitude_modulation
+from modulateurs.frequency_modulation import frequency_modulation
+
+# Paramètres de la simulation
+duration = 2.0  # Durée en secondes
+sample_rate = 44100  # Taux d'échantillonnage
+
+# Générer une onde alpha et un stimulus externe désynchronisé
+t, alpha_wave = generate_alpha_wave(frequency=10.0, duration=duration, sample_rate=sample_rate)
+_, desynchronized_wave = generate_desynchronized_wave(frequency=10.0, phase_shift=0.1, duration=duration, sample_rate=sample_rate)
+
+# Moduler les ondes (amplitude et fréquence)
+modulated_alpha_am = amplitude_modulation(alpha_wave, modulation_frequency=1.0, modulation_index=0.8)
+modulated_desynchronized_fm = frequency_modulation(carrier_frequency=10.0, modulation_frequency=2.0, modulation_index=1.0, duration=duration)
+
+# Simulation : émettre et recevoir les ondes modifiées
+emitted_alpha = emit_wave(modulated_alpha_am, amplification=1.5)
+emitted_desynchronized = emit_wave(modulated_desynchronized_fm, amplification=1.2)
+
+received_alpha = receive_wave(emitted_alpha)
+received_desynchronized = receive_wave(emitted_desynchronized)
+
+# Afficher les résultats de la simulation
+import matplotlib.pyplot as plt
+plt.figure(figsize=(10, 6))
+plt.plot(t, received_alpha, label='Received Alpha Wave (AM Modulated)')
+plt.plot(t, received_desynchronized, label='Received Desynchronized Wave (FM Modulated)')
+plt.title('Simulation: Alpha Wave and External Stimulus Interaction')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.legend()
+plt.grid(True)
+plt.show()
