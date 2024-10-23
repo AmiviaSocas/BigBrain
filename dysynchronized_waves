@@ -1,2 +1,87 @@
-# Interference et Perturbation 
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Fonction pour générer une onde désynchronisée avec un décalage de phase
+def generate_desynchronized_wave(frequency=10.0, phase_shift=0.1, duration=2.0, sample_rate=44100):
+    """
+    Génère une onde désynchronisée avec un décalage de phase.
+
+    Parameters:
+    frequency (float): La fréquence de l'onde (en Hz)
+    phase_shift (float): Décalage de phase entre 0 et 2π
+    duration (float): Durée en secondes
+    sample_rate (int): Taux d'échantillonnage
+
+    Returns:
+    t (numpy array): Tableau de temps
+    desynchronized_wave (numpy array): Onde désynchronisée
+    """
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    desynchronized_wave = np.sin(2 * np.pi * frequency * t + phase_shift)
+    return t, desynchronized_wave
+
+# Générer des ondes désynchronisées pour différentes bandes (alpha, bêta, gamma)
+def generate_brain_waves_deshynchronized(duration=2.0, sample_rate=44100):
+    """
+    Génère des versions désynchronisées des ondes alpha, bêta, gamma.
+
+    Parameters:
+    duration (float): Durée en secondes
+    sample_rate (int): Taux d'échantillonnage
+
+    Returns:
+    waves (dict): Dictionnaire contenant des ondes désynchronisées pour chaque bande
+    """
+    # Définir les fréquences pour chaque bande
+    frequencies = {
+        'alpha': 10.0,
+        'beta': 20.0,
+        'gamma': 40.0
+    }
+   
+    # Générer des ondes désynchronisées avec différents décalages de phase
+    phase_shifts = {
+        'alpha': np.pi / 4,
+        'beta': np.pi / 3,
+        'gamma': np.pi / 2
+    }
+   
+    waves = {}
+    for wave_type, freq in frequencies.items():
+        _, wave = generate_desynchronized_wave(frequency=freq, phase_shift=phase_shifts[wave_type], duration=duration, sample_rate=sample_rate)
+        waves[wave_type] = wave
+   
+    return waves
+
+# Générer les ondes cérébrales désynchronisées
+duration = 2.0  # Durée de la simulation
+waves = generate_brain_waves_deshynchronized(duration=duration)
+
+# Afficher les résultats
+t = np.linspace(0, duration, int(44100 * duration), False)
+plt.figure(figsize=(12, 8))
+
+# Affichage des ondes alpha, bêta, gamma désynchronisées
+plt.subplot(3, 1, 1)
+plt.plot(t, waves['alpha'], label='Alpha Wave (Désynchronisée)')
+plt.title('Alpha Wave Désynchronisée (10 Hz)')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+
+plt.subplot(3, 1, 2)
+plt.plot(t, waves['beta'], label='Beta Wave (Désynchronisée)', color='orange')
+plt.title('Beta Wave Désynchronisée (20 Hz)')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+
+plt.subplot(3, 1, 3)
+plt.plot(t, waves['gamma'], label='Gamma Wave (Désynchronisée)', color='green')
+plt.title('Gamma Wave Désynchronisée (40 Hz)')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
