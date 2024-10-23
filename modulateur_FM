@@ -1,0 +1,21 @@
+import numpy as np
+
+# Fonction pour moduler la fréquence d'une onde
+def frequency_modulation(carrier_frequency=10.0, modulation_frequency=2.0, modulation_index=1.0, duration=2.0, sample_rate=44100):
+    """
+    Modifie la fréquence de l'onde porteuse en utilisant une fréquence de modulation.
+   
+    Parameters:
+    carrier_frequency (float): La fréquence de l'onde porteuse (en Hz)
+    modulation_frequency (float): La fréquence de l'onde modulante (en Hz)
+    modulation_index (float): Le facteur de modulation de la fréquence
+    duration (float): Durée en secondes
+    sample_rate (int): Le taux d'échantillonnage
+   
+    Returns:
+    modulated_wave (numpy array): L'onde modulée en fréquence
+    """
+    t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+    modulation_signal = np.sin(2 * np.pi * modulation_frequency * t)  # Onde modulante
+    modulated_wave = np.sin(2 * np.pi * (carrier_frequency * t + modulation_index * modulation_signal))  # Onde modulée
+    return t, modulated_wave
