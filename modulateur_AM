@@ -1,0 +1,20 @@
+import numpy as np
+
+# Fonction pour moduler l'amplitude d'une onde
+def amplitude_modulation(wave, modulation_frequency=1.0, modulation_index=0.5, sample_rate=44100):
+    """
+    Modifie l'amplitude de l'onde en utilisant une fréquence de modulation.
+   
+    Parameters:
+    wave (numpy array): L'onde cérébrale générée
+    modulation_frequency (float): La fréquence de modulation (en Hz)
+    modulation_index (float): Le facteur de modulation de l'amplitude
+    sample_rate (int): Le taux d'échantillonnage
+   
+    Returns:
+    modulated_wave (numpy array): L'onde modulée en amplitude
+    """
+    t = np.linspace(0, len(wave) / sample_rate, num=len(wave), endpoint=False)
+    modulation_signal = 1 + modulation_index * np.sin(2 * np.pi * modulation_frequency * t)
+    modulated_wave = wave * modulation_signal
+    return modulated_wave
