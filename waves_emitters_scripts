@@ -1,4 +1,16 @@
-ici les scripts pour modeliser les differents émetteurs du cerveau.
+import numpy as np
 
-
-..en cours..
+# Fonction pour simuler un émetteur d'ondes
+def emit_wave(wave, amplification=1.0):
+    """
+    Amplifie l'onde d'entrée et simule l'émission de cette onde.
+   
+    Parameters:
+    wave (numpy array): L'onde cérébrale générée.
+    amplification (float): Facteur d'amplification de l'onde.
+   
+    Returns:
+    emitted_wave (numpy array): L'onde émise après amplification.
+    """
+    emitted_wave = wave * amplification
+    return emitted_wave
