@@ -1,1 +1,75 @@
+import numpy as np
 
+class Neurone:
+    def __init__(self, threshold=1.0):
+        """
+        Initialise un neurone basique.
+
+        Parameters:
+        threshold (float): Seuil d'activation du neurone
+        """
+        self.threshold = threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.output_signal = 0.0  # Signal à envoyer
+
+    def receive_input(self, input_signal):
+        """
+        Reçoit un signal d'entrée et met à jour le potentiel de membrane.
+
+        Parameters:
+        input_signal (float): Le signal reçu (potentiel synaptique ou autre stimulus)
+        """
+        self.membrane_potential += input_signal
+
+    def activate(self):
+        """
+        Vérifie si le neurone atteint le seuil d'activation et envoie un potentiel d'action.
+
+        Returns:
+        float: Signal envoyé (1.0 si activé, 0.0 sinon)
+        """
+        if self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0.0  # Réinitialisation du potentiel de membrane après activation
+            self.output_signal = 1.0  # Potentiel d'action généré
+        else:
+            self.output_signal = 0.0  # Pas de déclenchement
+
+        return self.output_signal
+
+# Exemple d'un neurone présynaptique utilisant le modèle de neurone basique
+class PresynapticNeurone(Neurone):
+    def __init__(self, threshold=1.0):
+        """
+        Modélise un neurone présynaptique basé sur le modèle de neurone basique.
+
+        Parameters:
+        threshold (float): Seuil d'activation du neurone présynaptique
+        """
+        super().__init__(threshold=threshold)
+
+    def send_signal(self):
+        """
+        Envoie un signal à travers la synapse (potentiel d'action) lorsque le neurone est activé.
+
+        Returns:
+        float: Signal présynaptique à transmettre à un neurone postsynaptique
+        """
+        return self.output_signal  # Le signal envoyé est le potentiel d'action généré
+
+# Simuler le comportement d'un neurone présynaptique
+def simulate_presynaptic_neurone():
+    # Créer un neurone présynaptique
+    presynaptic_neuron = PresynapticNeurone(threshold=1.0)
+
+    # Stimuler le neurone avec des signaux d'entrée
+    for cycle in range(5):
+        input_signal = np.random.rand()  # Signal aléatoire pour simuler un stimulus
+        presynaptic_neuron.receive_input(input_signal)
+        presynaptic_neuron.activate()
+
+        # Transmettre le signal présynaptique
+        presynaptic_signal = presynaptic_neuron.send_signal()
+        print(f"Cycle {cycle}: Signal présynaptique envoyé = {presynaptic_signal}")
+
+# Exécuter la simulation
+simulate_presynaptic_neurone()
