@@ -1,1 +1,78 @@
+import numpy as np
 
+class Synapse:
+    def __init__(self, weight=0.5, neurotransmitter='glutamate', type='excitatory'):
+        """
+        Modélise une connexion synaptique entre deux neurones.
+
+        Parameters:
+        weight (float): Le poids synaptique (force de la connexion).
+        neurotransmitter (str): Le neurotransmetteur utilisé (par défaut glutamate pour excitateur).
+        type (str): Type de synapse, 'excitatory' ou 'inhibitory'.
+        """
+        self.weight = weight
+        self.neurotransmitter = neurotransmitter
+        self.type = type
+
+    def transmit(self, presynaptic_signal):
+        """
+        Transmet le signal du neurone présynaptique vers le neurone postsynaptique.
+
+        Parameters:
+        presynaptic_signal (float): Le potentiel d'action du neurone présynaptique.
+
+        Returns:
+        postsynaptic_signal (float): Le signal transmis au neurone postsynaptique.
+        """
+        if self.type == 'excitatory':
+            return presynaptic_signal * self.weight  # Amplifie le signal
+        elif self.type == 'inhibitory':
+            return -presynaptic_signal * self.weight  # Réduit le signal (inhibition)
+
+# Exemple d'intégration avec un neurone présynaptique et postsynaptique
+class Neurone:
+    def __init__(self, threshold=1.0):
+        self.threshold = threshold
+        self.membrane_potential = 0.0
+   
+    def receive_input(self, input_signal):
+        """
+        Reçoit le signal d'entrée (potentiel synaptique) et met à jour le potentiel de membrane.
+        """
+        self.membrane_potential += input_signal
+   
+    def activate(self):
+        """
+        Déclenche un potentiel d'action si le seuil est atteint.
+        """
+        if self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0  # Réinitialiser après l'activation
+            return 1.0  # Potentiel d'action généré
+        return 0.0  # Pas de déclenchement
+
+# Simuler une connexion synaptique entre deux neurones
+def simulate_synapse():
+    # Neurone présynaptique
+    presynaptic_neuron = Neurone(threshold=1.0)
+    # Neurone postsynaptique
+    postsynaptic_neuron = Neurone(threshold=1.0)
+   
+    # Synapse excitatrice entre les deux neurones
+    synapse = Synapse(weight=0.6, neurotransmitter='glutamate', type='excitatory')
+   
+    # Signal présynaptique (potentiel d'action)
+    presynaptic_signal = 1.0  # Neurone présynaptique s'active
+   
+    # Transmission synaptique
+    postsynaptic_signal = synapse.transmit(presynaptic_signal)
+   
+    # Le neurone postsynaptique reçoit le signal
+    postsynaptic_neuron.receive_input(postsynaptic_signal)
+   
+    # Activation du neurone postsynaptique
+    output = postsynaptic_neuron.activate()
+   
+    print(f"Signal postsynaptique : {postsynaptic_signal}, Activation du neurone postsynaptique : {output}")
+
+# Exécuter la simulation
+simulate_synapse()
