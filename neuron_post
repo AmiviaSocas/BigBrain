@@ -1,1 +1,72 @@
+import numpy as np
 
+class Neurone:
+    def __init__(self, threshold=1.0):
+        """
+        Initialise un neurone basique.
+
+        Parameters:
+        threshold (float): Seuil d'activation du neurone
+        """
+        self.threshold = threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.output_signal = 0.0  # Signal à envoyer
+
+    def receive_input(self, input_signal):
+        """
+        Reçoit un signal d'entrée et met à jour le potentiel de membrane.
+
+        Parameters:
+        input_signal (float): Le signal reçu (potentiel synaptique ou autre stimulus)
+        """
+        self.membrane_potential += input_signal
+
+    def activate(self):
+        """
+        Vérifie si le neurone atteint le seuil d'activation et envoie un potentiel d'action.
+
+        Returns:
+        float: Signal envoyé (1.0 si activé, 0.0 sinon)
+        """
+        if self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0.0  # Réinitialisation du potentiel de membrane après activation
+            self.output_signal = 1.0  # Potentiel d'action généré
+        else:
+            self.output_signal = 0.0  # Pas de déclenchement
+
+        return self.output_signal
+
+# Neurone postsynaptique recevant des signaux via une synapse
+class PostsynapticNeurone(Neurone):
+    def __init__(self, threshold=1.0):
+        """
+        Modélise un neurone postsynaptique basé sur le modèle de neurone basique.
+
+        Parameters:
+        threshold (float): Seuil d'activation du neurone postsynaptique
+        """
+        super().__init__(threshold=threshold)
+
+    def receive_synaptic_signal(self, presynaptic_signal):
+        """
+        Reçoit un signal à travers la synapse (potentiel d'action du neurone présynaptique).
+
+        Parameters:
+        presynaptic_signal (float): Signal du neurone présynaptique (via une synapse)
+        """
+        self.receive_input(presynaptic_signal)
+        return self.activate()  # Active le neurone postsynaptique si le seuil est atteint
+
+# Simuler le comportement d'un neurone postsynaptique
+def simulate_postsynaptic_neurone():
+    # Créer un neurone postsynaptique
+    postsynaptic_neuron = PostsynapticNeurone(threshold=1.0)
+
+    # Simuler plusieurs signaux reçus par le neurone postsynaptique via une synapse
+    for cycle in range(5):
+        presynaptic_signal = np.random.rand()  # Signal aléatoire simulant un potentiel d'action présynaptique
+        postsynaptic_response = postsynaptic_neuron.receive_synaptic_signal(presynaptic_signal)
+        print(f"Cycle {cycle}: Signal présynaptique reçu = {presynaptic_signal}, Réponse postsynaptique = {postsynaptic_response}")
+
+# Exécuter la simulation
+simulate_postsynaptic_neurone()
