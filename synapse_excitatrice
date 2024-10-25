@@ -1,0 +1,23 @@
+class SynapseExcitatrice:
+    def __init__(self, weight=0.5, neurotransmitter='glutamate'):
+        """
+        Modélise une synapse excitatrice pour transmettre des signaux entre neurones.
+
+        Parameters:
+        weight (float): Le poids synaptique (force de la connexion).
+        neurotransmitter (str): Neurotransmetteur utilisé par la synapse excitatrice (par défaut glutamate).
+        """
+        self.weight = weight
+        self.neurotransmitter = neurotransmitter
+
+    def transmit(self, presynaptic_signal):
+        """
+        Transmet le signal du neurone présynaptique vers le neurone postsynaptique.
+
+        Parameters:
+        presynaptic_signal (float): Le potentiel d'action du neurone présynaptique.
+
+        Returns:
+        float: Signal transmis au neurone postsynaptique (amplifié par le poids synaptique).
+        """
+        return presynaptic_signal * self.weight
