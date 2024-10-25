@@ -1,0 +1,55 @@
+
+Neurotransmetteurs et leurs paramètres associés pour les simulations
+====================================================================
+
+1. Glutamate
+   - Type d'action: Excitateur
+   - Effet: Augmente l'excitabilité des neurones
+   - Types de neurones impliqués: Neurones sensoriels, neurones pyramidaux
+   - Utilisation: Augmente le potentiel de membrane, favorise l'activation
+
+2. GABA (Acide Gamma-Aminobutyrique)
+   - Type d'action: Inhibiteur
+   - Effet: Diminue l'excitabilité des neurones
+   - Types de neurones impliqués: Cellules de Purkinje, interneurones
+   - Utilisation: Diminue le potentiel de membrane, stabilise le réseau neuronal
+
+3. Dopamine
+   - Type d'action: Modulateur (excitateur et inhibiteur selon le récepteur)
+   - Effet: Renforcement des récompenses, rôle dans la motivation
+   - Types de neurones impliqués: Neurones du cortex préfrontal, système de récompense
+   - Utilisation: Modulation de l'excitabilité en fonction du contexte, influence la plasticité
+
+4. Sérotonine
+   - Type d'action: Modulateur
+   - Effet: Régulation de l'humeur, contrôle des émotions et de l'appétit
+   - Types de neurones impliqués: Neurones du tronc cérébral, interneurones
+   - Utilisation: Modifie l'état d'excitation général du réseau
+
+5. Acétylcholine
+   - Type d'action: Excitateur
+   - Effet: Facilite l'attention, la mémoire et la contraction musculaire
+   - Types de neurones impliqués: Neurones moteurs, neurones de l'hippocampe
+   - Utilisation: Augmente l'excitabilité pour favoriser l'apprentissage et la mémoire
+
+6. Noradrénaline (Norepinephrine)
+   - Type d'action: Modulateur
+   - Effet: Augmente la vigilance, prépare à la réponse au stress
+   - Types de neurones impliqués: Neurones de l'amygdale, neurones de l'hippocampe
+   - Utilisation: Modulation de la sensibilité des neurones au contexte
+
+7. Endorphines
+   - Type d'action: Inhibiteur
+   - Effet: Réduction de la douleur, amélioration de la sensation de bien-être
+   - Types de neurones impliqués: Interneurones, système de récompense
+   - Utilisation: Inhibition des signaux de douleur, modulation de l'état émotionnel
+
+8. Glutamine
+   - Type d'action: Précurseur
+   - Effet: Précurseur pour la synthèse de glutamate et GABA
+   - Types de neurones impliqués: Tous les neurones excitateurs et inhibiteurs
+   - Utilisation: Modifie la disponibilité des neurotransmetteurs dans le réseau
+
+====================================================================
+Ce fichier fournit les informations de base pour chaque neurotransmetteur à utiliser dans les simulations. 
+Les paramètres peuvent être ajustés dans les scripts de neurones pour simuler divers effets.
