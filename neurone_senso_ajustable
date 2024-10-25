@@ -1,0 +1,73 @@
+import numpy as np
+
+class NeuroneSensorielAjustable:
+    def __init__(self, threshold=1.0, stimulus_type='touch'):
+        """
+        Initialise un neurone sensoriel ajustable pour différents types de stimuli.
+
+        Parameters:
+        threshold (float): Seuil d'activation du neurone sensoriel (sensibilité).
+        stimulus_type (str): Type de stimulus que le neurone détecte ('touch', 'light', 'sound', 'smell', 'taste').
+        """
+        self.threshold = threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.stimulus_type = stimulus_type
+        self.output_signal = 0.0  # Signal de sortie pour transmission
+
+    def detect_stimulus(self, stimulus_intensity):
+        """
+        Reçoit un stimulus externe et le convertit en un signal interne.
+
+        Parameters:
+        stimulus_intensity (float): Intensité du stimulus reçu (simulant l'entrée sensorielle).
+        """
+        # Ajoute l'intensité du stimulus au potentiel de membrane
+        self.membrane_potential += stimulus_intensity
+
+    def activate(self):
+        """
+        Vérifie si le neurone atteint le seuil d'activation en réponse au stimulus.
+
+        Returns:
+        float: Signal envoyé (1.0 si activé, 0.0 sinon)
+        """
+        if self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0.0  # Réinitialisation après activation
+            self.output_signal = 1.0  # Potentiel d'action généré
+        else:
+            self.output_signal = 0.0  # Pas de déclenchement
+
+        return self.output_signal
+
+    def __repr__(self):
+        """
+        Représente le neurone sensoriel et son type pour une identification facile.
+        """
+        return f"NeuroneSensorielAjustable(stimulus_type={self.stimulus_type}, threshold={self.threshold})"
+
+# Simulation du modèle de neurone sensoriel ajustable pour différents types de stimuli
+def simulate_neurone_sensoriel_adjustable():
+    # Créer des neurones sensoriels pour chaque type de stimulus
+    types_of_stimuli = {
+        'touch': 1.0,
+        'light': 0.8,
+        'sound': 1.2,
+        'smell': 0.6,
+        'taste': 0.7
+    }
+   
+    # Initialiser chaque neurone sensoriel pour chaque type
+    sensor_neurons = {stype: NeuroneSensorielAjustable(threshold=sensitivity, stimulus_type=stype)
+                      for stype, sensitivity in types_of_stimuli.items()}
+
+    # Simuler des stimuli pour chaque neurone sensoriel
+    for stype, neuron in sensor_neurons.items():
+        print(f"\n--- Simulation pour le neurone sensoriel {stype} ---")
+        for cycle in range(3):
+            stimulus_intensity = np.random.rand() * 1.5  # Intensité aléatoire du stimulus
+            neuron.detect_stimulus(stimulus_intensity)
+            response = neuron.activate()
+            print(f"Cycle {cycle}: Intensité du stimulus = {stimulus_intensity:.2f}, Réponse du neurone = {response}")
+
+# Exécuter la simulation
+simulate_neurone_sensoriel_adjustable()
