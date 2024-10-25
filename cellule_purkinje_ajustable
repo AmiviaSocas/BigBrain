@@ -1,0 +1,70 @@
+class CellulePurkinjeAjustable:
+    def __init__(self, threshold=2.0, integration_capacity=10, inhibition_strength=0.7):
+        """
+        Initialise une cellule de Purkinje ajustable pour la coordination motrice.
+
+        Parameters:
+        threshold (float): Seuil d'activation pour envoyer un signal inhibiteur.
+        integration_capacity (int): Nombre de signaux que la cellule peut intégrer.
+        inhibition_strength (float): Force du signal inhibiteur envoyé par la cellule de Purkinje.
+        """
+        self.threshold = threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.integration_capacity = integration_capacity
+        self.inhibition_strength = inhibition_strength
+        self.input_count = 0  # Compteur de signaux reçus
+        self.output_signal = 0.0  # Signal de sortie pour l'inhibition
+
+    def receive_input(self, input_signal):
+        """
+        Reçoit un signal d'entrée et met à jour le potentiel de membrane.
+
+        Parameters:
+        input_signal (float): Signal reçu d'un autre neurone.
+        """
+        self.membrane_potential += input_signal
+        self.input_count += 1
+
+    def activate(self):
+        """
+        Vérifie si la cellule atteint le seuil d'activation après l'intégration des signaux.
+
+        Returns:
+        float: Signal inhibiteur (proportionnel à la force d'inhibition), 0.0 si inactif.
+        """
+        if self.input_count >= self.integration_capacity and self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0.0  # Réinitialisation après activation
+            self.input_count = 0  # Réinitialisation du compteur
+            self.output_signal = -self.inhibition_strength  # Signal inhibiteur
+        else:
+            self.output_signal = 0.0  # Pas de réponse
+
+        return self.output_signal
+
+    def __repr__(self):
+        """
+        Représente la cellule de Purkinje et ses caractéristiques pour une identification facile.
+        """
+        return (f"CellulePurkinjeAjustable(threshold={self.threshold}, "
+                f"integration_capacity={self.integration_capacity}, "
+                f"inhibition_strength={self.inhibition_strength})")
+
+# Simulation de cellules de Purkinje ajustables avec différentes capacités d'intégration
+def simulate_cellule_purkinje_adjustable():
+    # Créer des cellules de Purkinje pour différentes capacités d'intégration
+    purkinje_cells = [
+        CellulePurkinjeAjustable(threshold=2.0, integration_capacity=8, inhibition_strength=0.8),
+        CellulePurkinjeAjustable(threshold=1.5, integration_capacity=5, inhibition_strength=0.5)
+    ]
+
+    # Simuler des signaux reçus par chaque cellule de Purkinje
+    for cell in purkinje_cells:
+        print(f"\n--- Simulation pour {cell} ---")
+        for cycle in range(5):
+            input_signal = np.random.rand() * 1.5  # Signal d'entrée aléatoire
+            cell.receive_input(input_signal)
+            response = cell.activate()
+            print(f"Cycle {cycle}: Signal d'entrée = {input_signal:.2f}, Signal inhibiteur = {response}")
+
+# Exécuter la simulation
+simulate_cellule_purkinje_adjustable()
