@@ -1,0 +1,70 @@
+class NeuronePyramidalAjustable:
+    def __init__(self, threshold=1.0, integration_capacity=5, signal_strength=1.5):
+        """
+        Initialise un neurone pyramidal ajustable pour l'intégration de signaux multiples.
+
+        Parameters:
+        threshold (float): Seuil d'activation du neurone pyramidal.
+        integration_capacity (int): Nombre de signaux que le neurone peut intégrer avant activation.
+        signal_strength (float): Force du signal de sortie généré par le neurone pyramidal.
+        """
+        self.threshold = threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.integration_capacity = integration_capacity
+        self.signal_strength = signal_strength
+        self.input_count = 0  # Compteur de signaux reçus
+        self.output_signal = 0.0  # Signal de sortie pour transmission
+
+    def receive_input(self, input_signal):
+        """
+        Reçoit un signal d'entrée et met à jour le potentiel de membrane.
+
+        Parameters:
+        input_signal (float): Signal reçu d'un autre neurone.
+        """
+        self.membrane_potential += input_signal
+        self.input_count += 1
+
+    def activate(self):
+        """
+        Vérifie si le neurone atteint le seuil d'activation après l'intégration de signaux.
+
+        Returns:
+        float: Signal de sortie (proportionnel à la force de sortie), 0.0 si inactif.
+        """
+        if self.input_count >= self.integration_capacity and self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0.0  # Réinitialisation après activation
+            self.input_count = 0  # Réinitialisation du compteur
+            self.output_signal = self.signal_strength  # Signal de sortie généré
+        else:
+            self.output_signal = 0.0  # Pas de réponse
+
+        return self.output_signal
+
+    def __repr__(self):
+        """
+        Représente le neurone pyramidal et ses caractéristiques pour une identification facile.
+        """
+        return (f"NeuronePyramidalAjustable(threshold={self.threshold}, "
+                f"integration_capacity={self.integration_capacity}, "
+                f"signal_strength={self.signal_strength})")
+
+# Simulation de neurones pyramidaux ajustables avec différentes capacités d'intégration
+def simulate_neurone_pyramidal_adjustable():
+    # Créer des neurones pyramidaux pour différentes capacités d'intégration
+    pyramidal_neurons = [
+        NeuronePyramidalAjustable(threshold=1.0, integration_capacity=3, signal_strength=1.8),
+        NeuronePyramidalAjustable(threshold=1.5, integration_capacity=5, signal_strength=2.0)
+    ]
+
+    # Simuler des signaux reçus par chaque neurone pyramidal
+    for neuron in pyramidal_neurons:
+        print(f"\n--- Simulation pour {neuron} ---")
+        for cycle in range(5):
+            input_signal = np.random.rand() * 1.5  # Signal d'entrée aléatoire
+            neuron.receive_input(input_signal)
+            response = neuron.activate()
+            print(f"Cycle {cycle}: Signal d'entrée = {input_signal:.2f}, Signal de sortie = {response}")
+
+# Exécuter la simulation
+simulate_neurone_pyramidal_adjustable()
