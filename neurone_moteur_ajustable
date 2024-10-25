@@ -1,0 +1,70 @@
+class NeuroneMoteurAjustable:
+    def __init__(self, threshold=1.0, movement_type='limb', response_strength=1.0):
+        """
+        Initialise un neurone moteur ajustable pour différents types de mouvements.
+
+        Parameters:
+        threshold (float): Seuil d'activation du neurone moteur (sensibilité).
+        movement_type (str): Type de mouvement à générer ('limb', 'respiration', 'gland', etc.).
+        response_strength (float): Force de la réponse motrice.
+        """
+        self.threshold = threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.movement_type = movement_type
+        self.response_strength = response_strength
+        self.output_signal = 0.0  # Signal de sortie
+
+    def receive_input(self, input_signal):
+        """
+        Reçoit un signal d'entrée et met à jour le potentiel de membrane.
+
+        Parameters:
+        input_signal (float): Signal reçu d'un autre neurone (ex. stimulus sensoriel).
+        """
+        self.membrane_potential += input_signal
+
+    def activate(self):
+        """
+        Vérifie si le neurone atteint le seuil d'activation et génère une réponse motrice.
+
+        Returns:
+        float: Réponse motrice proportionnelle à la force de réponse (0.0 si inactif).
+        """
+        if self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0.0  # Réinitialisation après activation
+            self.output_signal = self.response_strength  # Réponse motrice générée
+        else:
+            self.output_signal = 0.0  # Pas de réponse
+
+        return self.output_signal
+
+    def __repr__(self):
+        """
+        Représente le neurone moteur et son type pour une identification facile.
+        """
+        return f"NeuroneMoteurAjustable(movement_type={self.movement_type}, threshold={self.threshold}, response_strength={self.response_strength})"
+
+# Simulation du neurone moteur ajustable pour différents types de mouvements
+def simulate_neurone_moteur_adjustable():
+    # Créer des neurones moteurs pour chaque type de mouvement
+    types_of_movements = {
+        'limb': (1.0, 1.5),
+        'respiration': (0.8, 0.7),
+        'gland': (1.2, 0.5)
+    }
+   
+    # Initialiser chaque neurone moteur pour chaque type de mouvement
+    motor_neurons = {mtype: NeuroneMoteurAjustable(threshold=thresh, movement_type=mtype, response_strength=strength)
+                     for mtype, (thresh, strength) in types_of_movements.items()}
+
+    # Simuler des signaux reçus par chaque neurone moteur
+    for mtype, neuron in motor_neurons.items():
+        print(f"\n--- Simulation pour le neurone moteur {mtype} ---")
+        for cycle in range(3):
+            input_signal = np.random.rand() * 1.5  # Signal d'entrée aléatoire
+            neuron.receive_input(input_signal)
+            response = neuron.activate()
+            print(f"Cycle {cycle}: Signal d'entrée = {input_signal:.2f}, Réponse motrice = {response}")
+
+# Exécuter la simulation
+simulate_neurone_moteur_adjustable()
