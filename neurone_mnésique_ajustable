@@ -1,1 +1,79 @@
+class NeuroneMnesiqueAjustable:
+    def __init__(self, threshold=1.0, memory_decay=0.1, recall_threshold=0.5):
+        """
+        Initialise un neurone mnésique ajustable pour le stockage et le rappel de souvenirs.
 
+        Parameters:
+        threshold (float): Seuil d'activation pour stocker le signal dans la mémoire.
+        memory_decay (float): Taux de diminution de la mémoire pour simuler l'oubli.
+        recall_threshold (float): Seuil pour rappeler une mémoire stockée en réponse à un stimulus.
+        """
+        self.threshold = threshold
+        self.memory_decay = memory_decay
+        self.recall_threshold = recall_threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.memory_storage = 0.0  # Stockage de la mémoire
+        self.output_signal = 0.0  # Signal de sortie pour le rappel
+
+    def receive_input(self, input_signal):
+        """
+        Reçoit un signal d'entrée et met à jour le potentiel de membrane.
+
+        Parameters:
+        input_signal (float): Signal reçu d'un autre neurone ou de l'environnement.
+        """
+        self.membrane_potential += input_signal
+
+        # Stocke dans la mémoire si le seuil est atteint
+        if self.membrane_potential >= self.threshold:
+            self.memory_storage += self.membrane_potential
+            self.membrane_potential = 0.0  # Réinitialisation après stockage
+
+    def recall_memory(self, stimulus_intensity):
+        """
+        Rappelle la mémoire stockée si l'intensité du stimulus dépasse le seuil de rappel.
+
+        Parameters:
+        stimulus_intensity (float): Intensité du stimulus pour tenter un rappel de la mémoire.
+
+        Returns:
+        float: Signal de rappel de la mémoire, 0.0 si le rappel échoue.
+        """
+        # Rappel de la mémoire si le stimulus est suffisant
+        if stimulus_intensity >= self.recall_threshold:
+            self.output_signal = self.memory_storage
+            # Déclenche le rappel et applique la décroissance
+            self.memory_storage *= (1 - self.memory_decay)
+        else:
+            self.output_signal = 0.0  # Pas de rappel
+
+        return self.output_signal
+
+    def __repr__(self):
+        """
+        Représente le neurone mnésique pour une identification facile.
+        """
+        return (f"NeuroneMnesiqueAjustable(threshold={self.threshold}, "
+                f"memory_decay={self.memory_decay}, recall_threshold={self.recall_threshold})")
+
+# Simulation du neurone mnésique ajustable avec différents types de stockage et rappel
+def simulate_neurone_mnesique_adjustable():
+    # Créer un neurone mnésique pour le test
+    memory_neuron = NeuroneMnesiqueAjustable(threshold=1.0, memory_decay=0.2, recall_threshold=0.5)
+
+    # Simuler des cycles de stockage de la mémoire
+    print("\n--- Simulation pour le stockage de la mémoire ---")
+    for cycle in range(3):
+        input_signal = np.random.rand() * 1.5  # Signal d'entrée aléatoire
+        memory_neuron.receive_input(input_signal)
+        print(f"Cycle {cycle}: Signal d'entrée = {input_signal:.2f}, Mémoire stockée = {memory_neuron.memory_storage:.2f}")
+
+    # Simuler des rappels de la mémoire avec un stimulus
+    print("\n--- Simulation pour le rappel de la mémoire ---")
+    for cycle in range(3):
+        stimulus_intensity = np.random.rand()  # Intensité aléatoire du stimulus
+        recall_signal = memory_neuron.recall_memory(stimulus_intensity)
+        print(f"Cycle {cycle}: Intensité du stimulus = {stimulus_intensity:.2f}, Signal de rappel = {recall_signal:.2f}")
+
+# Exécuter la simulation
+simulate_neurone_mnesique_adjustable()
