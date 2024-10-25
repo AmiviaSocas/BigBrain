@@ -1,0 +1,70 @@
+class InterneuroneAjustable:
+    def __init__(self, threshold=1.0, modulation_type='excitatory', modulation_strength=0.5):
+        """
+        Initialise un interneurone ajustable pour transmettre et moduler des signaux.
+
+        Parameters:
+        threshold (float): Seuil d'activation de l'interneurone.
+        modulation_type (str): Type de modulation ('excitatory' ou 'inhibitory').
+        modulation_strength (float): Force de la modulation appliquée au signal.
+        """
+        self.threshold = threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.modulation_type = modulation_type
+        self.modulation_strength = modulation_strength
+        self.output_signal = 0.0  # Signal de sortie pour transmission
+
+    def receive_input(self, input_signal):
+        """
+        Reçoit un signal d'entrée et met à jour le potentiel de membrane.
+
+        Parameters:
+        input_signal (float): Signal reçu d'un autre neurone.
+        """
+        self.membrane_potential += input_signal
+
+    def activate(self):
+        """
+        Vérifie si l'interneurone atteint le seuil d'activation et génère un signal modulé.
+
+        Returns:
+        float: Signal modulé (positif si excitatoire, négatif si inhibiteur, 0.0 si inactif).
+        """
+        if self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0.0  # Réinitialisation après activation
+            # Modulation du signal en fonction du type de modulation
+            self.output_signal = self.modulation_strength if self.modulation_type == 'excitatory' else -self.modulation_strength
+        else:
+            self.output_signal = 0.0  # Pas de réponse
+
+        return self.output_signal
+
+    def __repr__(self):
+        """
+        Représente l'interneurone et son type de modulation pour une identification facile.
+        """
+        return f"InterneuroneAjustable(modulation_type={self.modulation_type}, threshold={self.threshold}, modulation_strength={self.modulation_strength})"
+
+# Simulation de l'interneurone ajustable pour différents types de modulation
+def simulate_interneurone_adjustable():
+    # Créer des interneurones pour chaque type de modulation
+    types_of_modulation = {
+        'excitatory': (1.0, 0.6),
+        'inhibitory': (0.8, 0.4)
+    }
+   
+    # Initialiser chaque interneurone pour chaque type de modulation
+    interneurons = {mtype: InterneuroneAjustable(threshold=thresh, modulation_type=mtype, modulation_strength=strength)
+                    for mtype, (thresh, strength) in types_of_modulation.items()}
+
+    # Simuler des signaux reçus par chaque interneurone
+    for mtype, neuron in interneurons.items():
+        print(f"\n--- Simulation pour l'interneurone {mtype} ---")
+        for cycle in range(3):
+            input_signal = np.random.rand() * 1.5  # Signal d'entrée aléatoire
+            neuron.receive_input(input_signal)
+            response = neuron.activate()
+            print(f"Cycle {cycle}: Signal d'entrée = {input_signal:.2f}, Signal modulé = {response}")
+
+# Exécuter la simulation
+simulate_interneurone_adjustable()
