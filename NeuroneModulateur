@@ -1,4 +1,3 @@
-
 class NeuroneModulateur:
     def __init__(self, balance_threshold=1.0, adjustment_factor=0.5):
         """
