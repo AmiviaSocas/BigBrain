@@ -1,0 +1,62 @@
+class NeuroneDopaminergique:
+    def __init__(self, threshold=1.0, dopamine_release=1.0, release_sensitivity=0.5):
+        """
+        Initialise un neurone dopaminergique pour libérer de la dopamine en réponse à un stimulus.
+
+        Parameters:
+        threshold (float): Seuil d'activation pour libérer de la dopamine.
+        dopamine_release (float): Quantité de dopamine libérée par activation.
+        release_sensitivity (float): Sensibilité de la libération de dopamine, ajustant la réponse.
+        """
+        self.threshold = threshold
+        self.membrane_potential = 0.0  # Potentiel de membrane initial
+        self.dopamine_release = dopamine_release
+        self.release_sensitivity = release_sensitivity
+        self.output_signal = 0.0  # Quantité de dopamine libérée
+
+    def receive_input(self, input_signal):
+        """
+        Reçoit un signal d'entrée et met à jour le potentiel de membrane.
+
+        Parameters:
+        input_signal (float): Signal reçu d'un autre neurone ou d'un stimulus externe.
+        """
+        self.membrane_potential += input_signal
+
+    def activate(self):
+        """
+        Libère de la dopamine si le seuil d'activation est atteint, simulant une récompense.
+
+        Returns:
+        float: Quantité de dopamine libérée.
+        """
+        if self.membrane_potential >= self.threshold:
+            self.membrane_potential = 0.0  # Réinitialisation après libération
+            self.output_signal = self.dopamine_release * self.release_sensitivity  # Dopamine libérée
+        else:
+            self.output_signal = 0.0  # Pas de libération
+
+        return self.output_signal
+
+    def __repr__(self):
+        """
+        Représente le neurone dopaminergique pour une identification facile.
+        """
+        return (f"NeuroneDopaminergique(threshold={self.threshold}, "
+                f"dopamine_release={self.dopamine_release}, "
+                f"release_sensitivity={self.release_sensitivity})")
+
+# Simulation d'un neurone dopaminergique pour différents signaux
+def simulate_neurone_dopaminergique():
+    # Créer un neurone dopaminergique pour le test
+    dopaminergic_neuron = NeuroneDopaminergique(threshold=1.0, dopamine_release=1.2, release_sensitivity=0.6)
+
+    # Simuler des cycles de libération de dopamine
+    for cycle in range(5):
+        input_signal = np.random.rand() * 1.5  # Signal d'entrée aléatoire
+        dopaminergic_neuron.receive_input(input_signal)
+        dopamine = dopaminergic_neuron.activate()
+        print(f"Cycle {cycle}: Signal d'entrée = {input_signal:.2f}, Dopamine libérée = {dopamine:.2f}")
+
+# Exécuter la simulation
+simulate_neurone_dopaminergique()
