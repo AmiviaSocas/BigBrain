@@ -1,4 +1,4 @@
-class :
+class SynapseExcitatrice :
     def __init__(self, weight=0.5, neurotransmitter='glutamate'):
         """
         Modélise une synapse excitatrice pour transmettre des signaux entre neurones.
