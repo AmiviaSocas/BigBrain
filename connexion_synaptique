@@ -30,32 +30,10 @@ class Synapse:
             return -presynaptic_signal * self.weight  # Réduit le signal (inhibition)
 
 # Exemple d'intégration avec un neurone présynaptique et postsynaptique
-class Neurone:
-    def __init__(self, threshold=1.0):
-        self.threshold = threshold
-        self.membrane_potential = 0.0
-   
-    def receive_input(self, input_signal):
-        """
-        Reçoit le signal d'entrée (potentiel synaptique) et met à jour le potentiel de membrane.
-        """
-        self.membrane_potential += input_signal
-   
-    def activate(self):
-        """
-        Déclenche un potentiel d'action si le seuil est atteint.
-        """
-        if self.membrane_potential >= self.threshold:
-            self.membrane_potential = 0  # Réinitialiser après l'activation
-            return 1.0  # Potentiel d'action généré
-        return 0.0  # Pas de déclenchement
-
-# Simuler une connexion synaptique entre deux neurones
 def simulate_synapse():
-    # Neurone présynaptique
-    presynaptic_neuron = Neurone(threshold=1.0)
-    # Neurone postsynaptique
-    postsynaptic_neuron = Neurone(threshold=1.0)
+    # Neurone présynaptique et postsynaptique utilisant les classes existantes
+    presynaptic_neuron = PresynapticNeurone(threshold=1.0)
+    postsynaptic_neuron = PostsynapticNeurone(threshold=1.0)
    
     # Synapse excitatrice entre les deux neurones
     synapse = Synapse(weight=0.6, neurotransmitter='glutamate', type='excitatory')
