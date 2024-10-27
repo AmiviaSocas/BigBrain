@@ -1,4 +1,4 @@
-class NeuroneMnesiqueAjustable:
+class :
     def __init__(self, threshold=1.0, memory_decay=0.1, recall_threshold=0.5):
         """
         Initialise un neurone mnésique ajustable pour le stockage et le rappel de souvenirs.
