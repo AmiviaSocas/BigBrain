@@ -1,0 +1,52 @@
+import numpy as np
+
+class Synapse:
+    def __init__(self, weight=0.5, neurotransmitter='glutamate', type='excitatory', ltp_rate=0.01, ltd_rate=0.005):
+        """
+        Modélise une connexion synaptique avec plasticité (LTP/LTD).
+
+        Parameters:
+        weight (float): Le poids synaptique (force de la connexion).
+        neurotransmitter (str): Le neurotransmetteur utilisé.
+        type (str): Type de synapse ('excitatory' ou 'inhibitory').
+        ltp_rate (float): Taux de potentiation à long terme (renforcement).
+        ltd_rate (float): Taux de dépression à long terme (affaiblissement).
+        """
+        self.weight = weight
+        self.neurotransmitter = neurotransmitter
+        self.type = type
+        self.ltp_rate = ltp_rate
+        self.ltd_rate = ltd_rate
+
+    def transmit(self, presynaptic_signal):
+        """
+        Transmet le signal du neurone présynaptique vers le neurone postsynaptique.
+
+        Parameters:
+        presynaptic_signal (float): Le potentiel d'action du neurone présynaptique.
+
+        Returns:
+        postsynaptic_signal (float): Le signal transmis au neurone postsynaptique.
+        """
+        if self.type == 'excitatory':
+            return presynaptic_signal * self.weight
+        elif self.type == 'inhibitory':
+            return -presynaptic_signal * self.weight
+
+    def adjust_weight(self, presynaptic_signal, postsynaptic_response):
+        """
+        Ajuste le poids synaptique en fonction de l'activité des neurones présynaptique et postsynaptique.
+
+        Parameters:
+        presynaptic_signal (float): Le signal du neurone présynaptique.
+        postsynaptic_response (float): La réponse du neurone postsynaptique (potentiel d'action).
+        """
+        if presynaptic_signal > 0 and postsynaptic_response > 0:
+            # LTP : Si les deux neurones sont activés ensemble, renforce la connexion
+            self.weight += self.ltp_rate
+        elif presynaptic_signal > 0 and postsynaptic_response == 0:
+            # LTD : Si un neurone s'active mais pas l'autre, affaiblit la connexion
+            self.weight -= self.ltd_rate
+
+        # Limiter le poids synaptique pour éviter une trop grande fluctuation
+        self.weight = np.clip(self.weight, 0.1, 1.0)
