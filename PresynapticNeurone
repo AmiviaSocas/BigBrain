@@ -1,6 +1,6 @@
 import numpy as np
 
-class Neurone:
+class Neurone(NeuroneBase):
     def __init__(self, threshold=1.0):
         """
         Initialise un neurone basique.
