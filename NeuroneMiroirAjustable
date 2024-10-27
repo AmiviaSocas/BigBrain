@@ -1,4 +1,4 @@
-class NeuroneMiroirAjustable:
+class :
     def __init__(self, threshold=1.0, imitation_sensitivity=0.5, activation_type='self'):
         """
         Initialise un neurone en miroir ajustable pour imiter et réagir à des actions observées.
