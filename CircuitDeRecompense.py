@@ -1,0 +1,74 @@
+
+# Import des composants nécessaires pour le circuit de récompense
+from NeuroneDopaminergique import NeuroneDopaminergique
+from NeuroneRenforcementPositif import NeuroneRenforcementPositif
+from NeuroneModulateur import NeuroneModulateur
+from SystemeFeedback import SystemeFeedback
+import numpy as np
+
+class CircuitDeRecompense:
+    def __init__(self, dopamine_params, reinforcement_params, modulation_params, feedback_params):
+        """
+        Initialise un circuit de récompense avec des composants ajustables.
+
+        Parameters:
+        dopamine_params (dict): Paramètres pour le neurone dopaminergique.
+        reinforcement_params (dict): Paramètres pour le neurone de renforcement positif.
+        modulation_params (dict): Paramètres pour le neurone modulateur.
+        feedback_params (dict): Paramètres pour le système de feedback.
+        """
+        self.neurone_dopaminergique = NeuroneDopaminergique(**dopamine_params)
+        self.neurone_renforcement = NeuroneRenforcementPositif(**reinforcement_params)
+        self.neurone_modulateur = NeuroneModulateur(**modulation_params)
+        self.systeme_feedback = SystemeFeedback(**feedback_params)
+
+    def simuler_cycle(self, input_signal):
+        """
+        Simule un cycle d'activation dans le circuit de récompense.
+
+        Parameters:
+        input_signal (float): Signal initial simulant une récompense ou un stimulus.
+        Returns:
+        dict: Résultats de la simulation pour chaque composant.
+        """
+        # Étape 1 : Le neurone dopaminergique reçoit le signal d'entrée
+        dopamine_release = self.neurone_dopaminergique.receive_input(input_signal)
+        self.neurone_dopaminergique.activate()
+
+        # Étape 2 : Le neurone de renforcement positif reçoit de la dopamine et l'entrée
+        self.neurone_renforcement.receive_input(input_signal, dopamine_level=dopamine_release)
+        activation_renforcement = self.neurone_renforcement.activate()
+
+        # Étape 3 : Le neurone modulateur ajuste le signal pour stabiliser le circuit
+        adjusted_signal = self.neurone_modulateur.receive_input(activation_renforcement)
+
+        # Étape 4 : Le système de feedback renforce ou affaiblit la connexion en fonction de l'activation
+        new_strength = self.systeme_feedback.apply_feedback(activation_renforcement > 0)
+
+        return {
+            "dopamine_release": dopamine_release,
+            "activation_renforcement": activation_renforcement,
+            "adjusted_signal": adjusted_signal,
+            "new_connection_strength": new_strength
+        }
+
+
+# Simulation d'un circuit de récompense ajustable
+def simulate_reward_circuit():
+    # Initialiser les paramètres ajustables pour chaque composant
+    dopamine_params = {"threshold": 1.0, "dopamine_release": 1.2, "release_sensitivity": 0.6}
+    reinforcement_params = {"threshold": 1.0, "dopamine_sensitivity": 0.5, "retention_factor": 0.9}
+    modulation_params = {"balance_threshold": 1.0, "adjustment_factor": 0.3}
+    feedback_params = {"reinforcement_sensitivity": 0.3, "decay_factor": 0.1, "max_strength": 1.5}
+
+    # Créer le circuit de récompense
+    circuit = CircuitDeRecompense(dopamine_params, reinforcement_params, modulation_params, feedback_params)
+
+    # Simuler une série de cycles pour observer le comportement
+    for cycle in range(10):
+        input_signal = np.random.rand() * 1.5  # Signal d'entrée aléatoire
+        results = circuit.simuler_cycle(input_signal)
+        print(f"Cycle {cycle + 1}: Signal d'entrée = {input_signal:.2f}, Résultats = {results}")
+
+# Exécute la simulation
+simulate_reward_circuit()
