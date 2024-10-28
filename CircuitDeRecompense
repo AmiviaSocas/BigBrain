@@ -2,7 +2,7 @@
 from NeuroneDopaminergique import NeuroneDopaminergique
 from NeuroneRenforcementPositif import NeuroneRenforcementPositif
 from NeuroneModulateur import NeuroneModulateur
-from SystemeFeedback import SystemeFeedback
+from FeedbackCircuit import FeedbackCircuit
 import numpy as np
 
 class CircuitDeRecompense:
