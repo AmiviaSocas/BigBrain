@@ -1,0 +1,72 @@
+class Alcool:
+    def __init__(self, dose=1.0, max_effect=1.0, tolerance_rate=0.05):
+        """
+        Modélise les effets de l'alcool avec un mécanisme de tolérance.
+
+        Parameters:
+        dose (float): Quantité d'alcool consommée, impactant la force des effets.
+        max_effect (float): Niveau maximal d'effet sur les neurones et synapses.
+        tolerance_rate (float): Taux de tolérance, augmentant avec chaque utilisation.
+        """
+        self.dose = dose
+        self.max_effect = max_effect
+        self.effect_level = 0
+        self.tolerance_rate = tolerance_rate  # Vitesse d'augmentation de la tolérance
+        self.tolerance_factor = 1.0  # Facteur de tolérance initial
+
+    def increase_effect(self):
+        """
+        Augmente progressivement l'effet de l'alcool pour simuler une intoxication croissante,
+        ajustée par la tolérance.
+        """
+        effective_dose = self.dose / self.tolerance_factor
+        if self.effect_level < self.max_effect:
+            self.effect_level += 0.1 * effective_dose  # Effet réduit par la tolérance
+
+    def increase_tolerance(self):
+        """
+        Augmente la tolérance après chaque utilisation, rendant l'alcool moins efficace.
+        """
+        self.tolerance_factor += self.tolerance_rate  # La dose doit augmenter pour maintenir les effets
+
+    def alter_inhibitory_synapse(self, inhibitory_synapse):
+        """
+        Augmente l'effet inhibiteur pour simuler l'effet sédatif de l'alcool, ajusté par la tolérance.
+
+        Parameters:
+        inhibitory_synapse (Synapse): Synapse inhibitrice.
+        """
+        inhibitory_synapse.weight = min(inhibitory_synapse.weight + self.effect_level, 1.0)
+
+    def alter_excitatory_synapse(self, excitatory_synapse):
+        """
+        Diminue l'effet de la synapse excitatrice, réduisant la réponse émotionnelle, ajusté par la tolérance.
+
+        Parameters:
+        excitatory_synapse (Synapse): Synapse excitatrice.
+        """
+        excitatory_synapse.weight = max(excitatory_synapse.weight - self.effect_level, 0.1)
+
+    def adjust_neuron_sensitivity(self, neuron):
+        """
+        Diminue la sensibilité du neurone, ajustée par la tolérance.
+
+        Parameters:
+        neuron (Neurone): Neurone dont la sensibilité sera modifiée.
+        """
+        neuron.threshold += self.effect_level * 0.5
+
+    def apply_effects(self, inhibitory_synapse, excitatory_synapse, neuron):
+        """
+        Applique tous les effets de l'alcool et augmente la tolérance après chaque cycle.
+
+        Parameters:
+        inhibitory_synapse (Synapse): Synapse inhibitrice.
+        excitatory_synapse (Synapse): Synapse excitatrice.
+        neuron (Neurone): Neurone à ajuster en termes de sensibilité.
+        """
+        self.increase_effect()
+        self.alter_inhibitory_synapse(inhibitory_synapse)
+        self.alter_excitatory_synapse(excitatory_synapse)
+        self.adjust_neuron_sensitivity(neuron)
+        self.increase_tolerance()  # Augmentation de la tolérance
