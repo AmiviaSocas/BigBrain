@@ -20,7 +20,7 @@ class CircuitDeRecompense:
         self.neurone_dopaminergique = NeuroneDopaminergique(**dopamine_params)
         self.neurone_renforcement = NeuroneRenforcementPositif(**reinforcement_params)
         self.neurone_modulateur = NeuroneModulateur(**modulation_params)
-        self.systeme_feedback = SystemeFeedback(**feedback_params)
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
 
     def simuler_cycle(self, input_signal):
         """
@@ -43,7 +43,7 @@ class CircuitDeRecompense:
         adjusted_signal = self.neurone_modulateur.receive_input(activation_renforcement)
 
         # Étape 4 : Le système de feedback renforce ou affaiblit la connexion en fonction de l'activation
-        new_strength = self.systeme_feedback.apply_feedback(activation_renforcement > 0)
+        new_strength = self.feedback_circuit.apply_feedback(activation_renforcement > 0)
 
         return {
             "dopamine_release": dopamine_release,
