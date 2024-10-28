@@ -1,0 +1,82 @@
+import numpy as np
+
+class FeedbackCircuit:
+    def __init__(self, presynaptic_neuron, postsynaptic_neuron, synapse, feedback_strength=0.5, cycles=5, frequency=10):
+        """
+        Modélise un circuit de rétroaction adaptable avec des neurones pré et post synaptiques.
+
+        Parameters:
+        presynaptic_neuron (PresynapticNeurone): Instance du neurone présynaptique.
+        postsynaptic_neuron (PostsynapticNeurone): Instance du neurone postsynaptique.
+        synapse (Synapse): Instance de la synapse reliant les deux neurones.
+        feedback_strength (float): Force de la rétroaction appliquée au circuit.
+        cycles (int): Nombre de cycles de rétroaction.
+        frequency (float): Fréquence de l'onde de rétroaction en Hz.
+        """
+        self.presynaptic_neuron = presynaptic_neuron
+        self.postsynaptic_neuron = postsynaptic_neuron
+        self.synapse = synapse
+        self.feedback_strength = feedback_strength
+        self.cycles = cycles
+        self.frequency = frequency
+        self.history = []  # Historique des réponses postsynaptiques
+
+    def generate_feedback_signal(self, sample_rate=44100, duration=1.0):
+        """
+        Génère un signal de rétroaction en fonction de la fréquence et de la force de rétroaction.
+
+        Returns:
+        feedback_signal (array): Signal de rétroaction pour le cycle.
+        """
+        t = np.linspace(0, duration, int(sample_rate * duration), False)
+        feedback_signal = self.feedback_strength * np.sin(2 * np.pi * self.frequency * t)
+        return feedback_signal
+
+    def simulate_feedback_loop(self, input_signal):
+        """
+        Simule la boucle de rétroaction en utilisant les neurones présynaptique et postsynaptique.
+
+        Parameters:
+        input_signal (float): Signal initial transmis au neurone présynaptique.
+
+        Returns:
+        self.history (list): Historique des activations postsynaptiques après chaque cycle.
+        """
+        for cycle in range(self.cycles):
+            # Neurone présynaptique s'active et transmet le signal via la synapse
+            presynaptic_response = self.presynaptic_neuron.receive_input(input_signal)
+            postsynaptic_signal = self.synapse.transmit(presynaptic_response)
+
+            # Activation du neurone postsynaptique avec le signal reçu
+            self.postsynaptic_neuron.receive_input(postsynaptic_signal)
+            output = self.postsynaptic_neuron.activate()
+
+            # Ajout du signal de rétroaction
+            feedback_signal = self.generate_feedback_signal()
+            input_signal = postsynaptic_signal + np.mean(feedback_signal)
+
+            # Enregistrement des réponses postsynaptiques
+            self.history.append(output)
+       
+        return self.history
+
+# Exemple d'utilisation
+def example_usage():
+    # Instanciation des neurones pré et post synaptiques et d'une synapse
+    presynaptic_neuron = PresynapticNeurone(threshold=1.0)
+    postsynaptic_neuron = PostsynapticNeurone(threshold=1.0)
+    synapse = Synapse(weight=0.5, neurotransmitter='glutamate', type='excitatory')
+
+    # Initialisation du circuit de rétroaction
+    feedback_circuit = FeedbackCircuit(presynaptic_neuron, postsynaptic_neuron, synapse, feedback_strength=0.5, cycles=5, frequency=10)
+
+    # Simulation de la boucle de rétroaction
+    input_signal = 1.0  # Signal initial pour le neurone présynaptique
+    history = feedback_circuit.simulate_feedback_loop(input_signal)
+
+    # Affichage des résultats
+    for cycle, output in enumerate(history):
+        print(f"Cycle {cycle + 1}: Activation du neurone postsynaptique = {output}")
+
+# Exécution de l'exemple
+example_usage()
