@@ -1,4 +1,3 @@
-
 # Import des composants nécessaires pour le circuit de récompense
 from NeuroneDopaminergique import NeuroneDopaminergique
 from NeuroneRenforcementPositif import NeuroneRenforcementPositif
