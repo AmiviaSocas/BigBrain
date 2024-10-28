@@ -1,0 +1,81 @@
+import numpy as np
+
+class SensoryCircuit:
+    def __init__(self, sensory_neuron, postsynaptic_neuron, synapse, sensitivity=1.0, cycles=5):
+        """
+        Modélise un circuit sensoriel adaptable.
+
+        Parameters:
+        sensory_neuron (SensoryNeurone): Instance du neurone sensoriel pour recevoir des stimuli.
+        postsynaptic_neuron (Neurone): Instance du neurone qui traite le signal.
+        synapse (Synapse): Synapse reliant le neurone sensoriel et le neurone postsynaptique.
+        sensitivity (float): Sensibilité du neurone sensoriel aux stimuli.
+        cycles (int): Nombre de cycles pour la rétroaction sensorielle.
+        """
+        self.sensory_neuron = sensory_neuron
+        self.postsynaptic_neuron = postsynaptic_neuron
+        self.synapse = synapse
+        self.sensitivity = sensitivity
+        self.cycles = cycles
+        self.history = []  # Historique des activations postsynaptiques
+
+    def apply_sensory_stimulus(self, stimulus_strength):
+        """
+        Applique un stimulus externe au neurone sensoriel en fonction de la sensibilité.
+
+        Parameters:
+        stimulus_strength (float): Intensité du stimulus appliqué.
+        Returns:
+        response (float): Réponse du neurone sensoriel.
+        """
+        adjusted_stimulus = stimulus_strength * self.sensitivity
+        self.sensory_neuron.receive_input(adjusted_stimulus)
+        return self.sensory_neuron.activate()
+
+    def simulate_sensory_feedback_loop(self, external_stimulus):
+        """
+        Simule le circuit sensoriel avec rétroaction pour ajuster la réponse au stimulus.
+
+        Parameters:
+        external_stimulus (float): Stimulus initial reçu par le neurone sensoriel.
+
+        Returns:
+        self.history (list): Historique des activations du neurone postsynaptique.
+        """
+        for cycle in range(self.cycles):
+            # Neurone sensoriel reçoit un stimulus ajusté
+            sensory_response = self.apply_sensory_stimulus(external_stimulus)
+            postsynaptic_signal = self.synapse.transmit(sensory_response)
+
+            # Neurone postsynaptique traite le signal reçu
+            self.postsynaptic_neuron.receive_input(postsynaptic_signal)
+            output = self.postsynaptic_neuron.activate()
+
+            # Enregistrement de la réponse
+            self.history.append(output)
+
+            # Ajustement de la sensibilité selon la rétroaction
+            self.sensitivity *= 0.9 if output > 0 else 1.1  # Réduit la sensibilité si activé
+
+        return self.history
+
+# Exemple d'utilisation
+def example_usage():
+    # Instanciation des neurones sensoriel et postsynaptique, et d'une synapse
+    sensory_neuron = SensoryNeurone(threshold=1.0)
+    postsynaptic_neuron = Neurone(threshold=1.0)
+    synapse = Synapse(weight=0.5, neurotransmitter='glutamate', type='excitatory')
+
+    # Initialisation du circuit sensoriel
+    sensory_circuit = SensoryCircuit(sensory_neuron, postsynaptic_neuron, synapse, sensitivity=1.0, cycles=5)
+
+    # Simulation de la boucle sensorielle
+    external_stimulus = 1.0  # Stimulus initial appliqué au neurone sensoriel
+    history = sensory_circuit.simulate_sensory_feedback_loop(external_stimulus)
+
+    # Affichage des résultats
+    for cycle, output in enumerate(history):
+        print(f"Cycle {cycle + 1}: Activation du neurone postsynaptique = {output}")
+
+# Exécution de l'exemple
+example_usage()
