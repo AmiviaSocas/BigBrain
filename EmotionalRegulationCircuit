@@ -1,0 +1,90 @@
+import numpy as np
+
+class EmotionalRegulationCircuit:
+    def __init__(self, dopaminergic_neuron, inhibitory_synapse, excitatory_synapse, postsynaptic_neuron, cycles=5, modulation_factor=0.5):
+        """
+        Modélise un circuit de régulation émotionnelle utilisant des neurones dopaminergiques et des synapses.
+
+        Parameters:
+        dopaminergic_neuron (DopaminergicNeuron): Neurone dopaminergique pour la régulation émotionnelle.
+        inhibitory_synapse (InhibitorySynapse): Synapse inhibitrice pour calmer la réponse émotionnelle.
+        excitatory_synapse (ExcitatorySynapse): Synapse excitatrice pour intensifier la réponse émotionnelle.
+        postsynaptic_neuron (PostsynapticNeurone): Neurone postsynaptique pour interpréter la réponse.
+        cycles (int): Nombre de cycles de rétroaction émotionnelle.
+        modulation_factor (float): Facteur de modulation pour ajuster les intensités émotionnelles.
+        """
+        self.dopaminergic_neuron = dopaminergic_neuron
+        self.inhibitory_synapse = inhibitory_synapse
+        self.excitatory_synapse = excitatory_synapse
+        self.postsynaptic_neuron = postsynaptic_neuron
+        self.cycles = cycles
+        self.modulation_factor = modulation_factor
+        self.history = []  # Historique des réponses émotionnelles
+
+    def apply_emotional_modulation(self, signal_strength, is_positive=True):
+        """
+        Applique une modulation émotionnelle selon le type de réponse.
+
+        Parameters:
+        signal_strength (float): Intensité du signal reçu.
+        is_positive (bool): Si vrai, augmente l'émotion (excitation), sinon diminue (inhibition).
+        Returns:
+        float: Signal modulé.
+        """
+        if is_positive:
+            return self.excitatory_synapse.transmit(signal_strength * self.modulation_factor)
+        else:
+            return self.inhibitory_synapse.transmit(signal_strength * self.modulation_factor)
+
+    def simulate_emotional_feedback_loop(self, external_input):
+        """
+        Simule le circuit de régulation émotionnelle avec rétroaction.
+
+        Parameters:
+        external_input (float): Stimulus initial qui influence l'émotion.
+
+        Returns:
+        self.history (list): Historique des activations postsynaptiques.
+        """
+        for cycle in range(self.cycles):
+            # Neurone dopaminergique reçoit le signal et s'active
+            self.dopaminergic_neuron.receive_input(external_input)
+            dopaminergic_response = self.dopaminergic_neuron.activate()
+
+            # Modulation émotionnelle
+            if dopaminergic_response > 0:
+                modulated_signal = self.apply_emotional_modulation(dopaminergic_response, is_positive=True)
+            else:
+                modulated_signal = self.apply_emotional_modulation(dopaminergic_response, is_positive=False)
+
+            # Neurone postsynaptique reçoit le signal modulé
+            self.postsynaptic_neuron.receive_input(modulated_signal)
+            output = self.postsynaptic_neuron.activate()
+            self.history.append(output)
+
+            # Ajustement du facteur de modulation
+            self.modulation_factor *= 0.95 if output > 0 else 1.05
+
+        return self.history
+
+# Exemple d'utilisation
+def example_usage():
+    # Instanciation des neurones et synapses pour le circuit émotionnel
+    dopaminergic_neuron = DopaminergicNeuron(threshold=1.0)
+    postsynaptic_neuron = PostsynapticNeurone(threshold=1.0)
+    excitatory_synapse = ExcitatorySynapse(weight=0.6)
+    inhibitory_synapse = InhibitorySynapse(weight=0.4)
+
+    # Initialisation du circuit de régulation émotionnelle
+    emotional_circuit = EmotionalRegulationCircuit(dopaminergic_neuron, inhibitory_synapse, excitatory_synapse, postsynaptic_neuron, cycles=5, modulation_factor=0.5)
+
+    # Simulation de la régulation émotionnelle
+    external_input = 1.0  # Stimulus initial influençant l'émotion
+    history = emotional_circuit.simulate_emotional_feedback_loop(external_input)
+
+    # Affichage des résultats
+    for cycle, output in enumerate(history):
+        print(f"Cycle {cycle + 1}: Activation du neurone postsynaptique = {output}")
+
+# Exécution de l'exemple
+example_usage()
