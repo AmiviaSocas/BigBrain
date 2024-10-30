@@ -1,0 +1,26 @@
+class Tristesse(Emotion):
+    def __init__(self, intensity=1.0, duration=5):
+        """
+        Classe modélisant la tristesse, diminuant l'activité des neurones dopaminergiques
+        et augmentant l'inhibition dans le circuit.
+
+        Parameters:
+        intensity (float): Intensité de la tristesse, affectant la force de son impact.
+        duration (int): Durée de la tristesse en cycles de simulation.
+        """
+        super().__init__(intensity, duration)
+
+    def apply_effects(self, circuit):
+        """
+        Diminue l'activité dopaminergique et augmente l'inhibition pour simuler la tristesse.
+
+        Parameters:
+        circuit (object): Circuit neuronal influencé par la tristesse.
+        """
+        for neuron in circuit.neurons:
+            if isinstance(neuron, NeuroneDopaminergique):
+                neuron.threshold += self.intensity * 0.2  # Augmente le seuil pour diminuer la réactivité
+
+        for synapse in circuit.synapses:
+            if isinstance(synapse, SynapseInhibitrice):
+                synapse.weight = min(synapse.weight + self.intensity * 0.1, 1.0)  # Renforce l'inhibition
