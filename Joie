@@ -1,0 +1,21 @@
+class Joie(Emotion):
+    def __init__(self, intensity=1.0, duration=5):
+        """
+        Classe modélisant la joie, augmentant l'activité des neurones dopaminergiques.
+
+        Parameters:
+        intensity (float): Intensité de la joie, affectant la force de son impact.
+        duration (int): Durée de la joie en cycles de simulation.
+        """
+        super().__init__(intensity, duration)
+
+    def apply_effects(self, circuit):
+        """
+        Augmente l'activité dopaminergique pour simuler la joie.
+
+        Parameters:
+        circuit (object): Circuit neuronal influencé par la joie.
+        """
+        for neuron in circuit.neurons:
+            if isinstance(neuron, NeuroneDopaminergique):
+                neuron.threshold -= self.intensity * 0.2  # Abaisse le seuil pour augmenter la réactivité
