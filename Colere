@@ -1,0 +1,27 @@
+class Colere(Emotion):
+    def __init__(self, intensity=1.0, duration=5):
+        """
+        Classe modélisant la colère, augmentant l'excitation et la réactivité des neurones.
+
+        Parameters:
+        intensity (float): Intensité de la colère, affectant la force de son impact.
+        duration (int): Durée de la colère en cycles de simulation.
+        """
+        super().__init__(intensity, duration)
+
+    def apply_effects(self, circuit):
+        """
+        Augmente l'excitation et la sensibilité des neurones dopaminergiques.
+
+        Parameters:
+        circuit (object): Circuit neuronal influencé par la colère.
+        """
+        for neuron in circuit.neurons:
+            if isinstance(neuron, NeuroneDopaminergique):
+                neuron.threshold -= self.intensity * 0.3  # Abaisse le seuil pour une réactivité accrue
+
+        for synapse in circuit.synapses:
+            if isinstance(synapse, SynapseExcitatrice):
+                synapse.weight = min(synapse.weight + self.intensity * 0.2, 1.0)  # Augmente l'excitation
+            elif isinstance(synapse, SynapseInhibitrice):
+                synapse.weight = max(synapse.weight - self.intensity * 0.1, 0.1)  # Réduit temporairement l'inhibition
