@@ -1,0 +1,24 @@
+class Surprise(Emotion):
+    def __init__(self, intensity=1.0, duration=2):
+        """
+        Classe modélisant la surprise, augmentant brièvement l'excitation et la réactivité.
+
+        Parameters:
+        intensity (float): Intensité de la surprise, affectant la force de son impact.
+        duration (int): Durée de la surprise en cycles de simulation.
+        """
+        super().__init__(intensity, duration)
+
+    def apply_effects(self, circuit):
+        """
+        Augmente brièvement l'excitation des neurones pour une réponse de surprise.
+
+        Parameters:
+        circuit (object): Circuit neuronal influencé par la surprise.
+        """
+        for neuron in circuit.neurons:
+            neuron.threshold -= self.intensity * 0.2  # Réactivité accrue temporairement
+
+        for synapse in circuit.synapses:
+            if isinstance(synapse, SynapseExcitatrice):
+                synapse.weight = min(synapse.weight + self.intensity * 0.2, 1.0)  # Augmente temporairement l'excitation
