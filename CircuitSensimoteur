@@ -1,0 +1,71 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from NeuroneMoteur import NeuroneMoteur
+from Interneurone import Interneurone
+from FeedbackCircuit import FeedbackCircuit
+
+class CircuitSensimoteur:
+    def __init__(self, sensor_params, motor_params, interneuron_params, feedback_params):
+        """
+        Initialise un circuit sensimoteur pour la coordination sensorimotrice.
+
+        Parameters:
+        sensor_params (dict): Paramètres pour le neurone sensoriel.
+        motor_params (dict): Paramètres pour le neurone moteur.
+        interneuron_params (dict): Paramètres pour l'interneurone.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurone_sensoriel = NeuroneSensoriel(**sensor_params)
+        self.interneurone = Interneurone(**interneuron_params)
+        self.neurone_moteur = NeuroneMoteur(**motor_params)
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def simuler_cycle(self, input_signal):
+        """
+        Simule un cycle de réponse sensorimotrice.
+
+        Parameters:
+        input_signal (float): Signal sensoriel externe.
+        Returns:
+        dict: Résultats de la simulation pour chaque composant.
+        """
+        # Étape 1 : Neurone sensoriel reçoit le signal d'entrée
+        sensor_output = self.neurone_sensoriel.receive_input(input_signal)
+        self.neurone_sensoriel.activate()
+
+        # Étape 2 : Interneurone traite le signal du neurone sensoriel
+        self.interneurone.receive_input(sensor_output)
+        interneuron_output = self.interneurone.activate()
+
+        # Étape 3 : Neurone moteur reçoit l'information et produit une réponse
+        self.neurone_moteur.receive_input(interneuron_output)
+        motor_response = self.neurone_moteur.activate()
+
+        # Étape 4 : Circuit de feedback ajuste la force de la connexion en fonction de l’efficacité de la réponse
+        feedback_adjustment = self.feedback_circuit.apply_feedback(motor_response > 0)
+
+        return {
+            "sensor_output": sensor_output,
+            "interneuron_output": interneuron_output,
+            "motor_response": motor_response,
+            "feedback_adjustment": feedback_adjustment
+        }
+
+# Simulation d'un circuit sensimoteur
+def simulate_sensimotor_circuit():
+    # Paramètres ajustables
+    sensor_params = {"sensitivity": 1.0, "threshold": 0.8}
+    interneuron_params = {"threshold": 1.0}
+    motor_params = {"threshold": 1.0, "response_strength": 0.9}
+    feedback_params = {"reinforcement_sensitivity": 0.2, "decay_factor": 0.1, "max_strength": 1.2}
+
+    # Créer le circuit sensimoteur
+    circuit = CircuitSensimoteur(sensor_params, motor_params, interneuron_params, feedback_params)
+
+    # Simuler une série de cycles pour observer la coordination
+    for cycle in range(10):
+        input_signal = np.random.rand()  # Signal sensoriel externe aléatoire
+        results = circuit.simuler_cycle(input_signal)
+        print(f"Cycle {cycle + 1}: Signal sensoriel = {input_signal:.2f}, Résultats = {results}")
+
+# Exécute la simulation
+simulate_sensimotor_circuit()
