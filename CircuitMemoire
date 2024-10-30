@@ -1,0 +1,69 @@
+from NeuroneRenforcementPositif import NeuroneRenforcementPositif
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class CircuitMemoire:
+    def __init__(self, reinforcement_params, synapse_params, feedback_params):
+        """
+        Initialise un circuit de la mémoire avec des composants de renforcement et de plasticité synaptique.
+
+        Parameters:
+        reinforcement_params (dict): Paramètres pour les neurones de renforcement positif.
+        synapse_params (dict): Paramètres pour les synapses avec LTP/LTD.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurone_renforcement = NeuroneRenforcementPositif(**reinforcement_params)
+        self.synapse = Synapse(**synapse_params)
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def simuler_cycle(self, input_signal, recall=False):
+        """
+        Simule un cycle de mémorisation ou de rappel d'un souvenir.
+
+        Parameters:
+        input_signal (float): Signal initial, représentant une information à mémoriser.
+        recall (bool): Si True, réactive la mémoire pour un rappel, sinon pour la mémorisation.
+       
+        Returns:
+        dict: Résultats de la simulation pour chaque composant.
+        """
+        # Étape 1 : Neurone de renforcement reçoit le signal d'entrée
+        reinforcement_output = self.neurone_renforcement.receive_input(input_signal)
+        self.neurone_renforcement.activate()
+
+        # Étape 2 : Plasticité synaptique ajuste la force de la connexion en fonction du renforcement
+        if recall:
+            # En cas de rappel, renforce ou affaiblit le souvenir selon la rétroaction
+            self.synapse.adjust_weight(reinforcement_output, input_signal)
+        else:
+            # Pour la mémorisation initiale, renforce la connexion
+            self.synapse.adjust_weight(input_signal, reinforcement_output)
+
+        # Étape 3 : Boucle de rétroaction pour réactivation (consolidation) du souvenir
+        feedback_adjustment = self.feedback_circuit.apply_feedback(reinforcement_output > 0)
+
+        return {
+            "reinforcement_output": reinforcement_output,
+            "synapse_weight": self.synapse.weight,
+            "feedback_adjustment": feedback_adjustment
+        }
+
+# Simulation d'un circuit de la mémoire
+def simulate_memory_circuit():
+    # Paramètres ajustables
+    reinforcement_params = {"threshold": 1.0, "dopamine_sensitivity": 0.5, "retention_factor": 0.9}
+    synapse_params = {"weight": 0.5, "ltp_rate": 0.01, "ltd_rate": 0.005, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.2, "decay_factor": 0.1, "max_strength": 1.2}
+
+    # Créer le circuit de la mémoire
+    circuit = CircuitMemoire(reinforcement_params, synapse_params, feedback_params)
+
+    # Simuler une série de cycles pour observer la mémorisation et le rappel
+    for cycle in range(10):
+        input_signal = np.random.rand() * 1.5  # Signal d'information à mémoriser
+        recall = cycle >= 5  # Activer le rappel après quelques cycles
+        results = circuit.simuler_cycle(input_signal, recall=recall)
+        print(f"Cycle {cycle + 1}: Signal d'entrée = {input_signal:.2f}, Résultats = {results}")
+
+# Exécute la simulation
+simulate_memory_circuit()
