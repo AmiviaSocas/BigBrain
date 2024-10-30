@@ -1,0 +1,25 @@
+class Peur(Emotion):
+    def __init__(self, intensity=1.0, duration=5):
+        """
+        Classe modélisant la peur, augmentant la sensibilité et l'inhibition pour une réponse d'alerte.
+
+        Parameters:
+        intensity (float): Intensité de la peur, affectant la force de son impact.
+        duration (int): Durée de la peur en cycles de simulation.
+        """
+        super().__init__(intensity, duration)
+
+    def apply_effects(self, circuit):
+        """
+        Augmente la sensibilité des neurones dopaminergiques et renforce l'inhibition.
+
+        Parameters:
+        circuit (object): Circuit neuronal influencé par la peur.
+        """
+        for neuron in circuit.neurons:
+            if isinstance(neuron, NeuroneDopaminergique):
+                neuron.threshold -= self.intensity * 0.15  # Augmente la sensibilité pour une alerte rapide
+
+        for synapse in circuit.synapses:
+            if isinstance(synapse, SynapseInhibitrice):
+                synapse.weight = min(synapse.weight + self.intensity * 0.2, 1.0)  # Renforce l'inhibition pour une réaction de recul
