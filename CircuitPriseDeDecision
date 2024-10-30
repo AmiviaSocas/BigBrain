@@ -1,0 +1,81 @@
+from NeuroneRenforcementPositif import NeuroneRenforcementPositif
+from CircuitMemoire import CircuitMemoire
+from Interneurone import Interneurone
+from FeedbackCircuit import FeedbackCircuit
+
+class CircuitPriseDeDecision:
+    def __init__(self, memory_params, reinforcement_params, interneuron_params, feedback_params):
+        """
+        Initialise un circuit de prise de décision, intégrant la mémoire et le renforcement.
+
+        Parameters:
+        memory_params (dict): Paramètres pour le circuit de mémoire.
+        reinforcement_params (dict): Paramètres pour le neurone de renforcement positif.
+        interneuron_params (dict): Paramètres pour les interneurones.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.circuit_memoire = CircuitMemoire(**memory_params)
+        self.neurone_renforcement = NeuroneRenforcementPositif(**reinforcement_params)
+        self.interneurone = Interneurone(**interneuron_params)
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def simuler_cycle(self, options, previous_outcome=None):
+        """
+        Simule un cycle de prise de décision en évaluant les options disponibles.
+
+        Parameters:
+        options (list): Liste des options à évaluer.
+        previous_outcome (float): Résultat de la décision précédente, influençant la décision actuelle.
+       
+        Returns:
+        dict: Résultat de la décision et détails de la simulation.
+        """
+        decision_values = []
+
+        # Étape 1 : Évaluer chaque option en utilisant le circuit de mémoire et le renforcement
+        for option in options:
+            memory_output = self.circuit_memoire.simuler_cycle(option, recall=True)
+            reinforcement_output = self.neurone_renforcement.receive_input(memory_output["reinforcement_output"])
+            self.neurone_renforcement.activate()
+
+            # Calcul de la valeur décisionnelle de chaque option
+            decision_value = reinforcement_output + memory_output["synapse_weight"]
+            decision_values.append(decision_value)
+
+        # Étape 2 : Sélectionner l'option avec la plus grande valeur
+        chosen_option_index = decision_values.index(max(decision_values))
+        chosen_option = options[chosen_option_index]
+
+        # Étape 3 : Boucle de feedback pour ajuster les connexions basées sur le résultat précédent
+        if previous_outcome is not None:
+            self.feedback_circuit.apply_feedback(previous_outcome > 0)
+
+        return {
+            "chosen_option": chosen_option,
+            "decision_values": decision_values,
+            "feedback_adjustment": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation d'un circuit de prise de décision
+def simulate_decision_circuit():
+    # Paramètres ajustables
+    memory_params = {"reinforcement_params": {"threshold": 1.0}, "feedback_params": {"reinforcement_sensitivity": 0.2}}
+    reinforcement_params = {"threshold": 1.0, "dopamine_sensitivity": 0.5}
+    interneuron_params = {"threshold": 1.0}
+    feedback_params = {"reinforcement_sensitivity": 0.3, "decay_factor": 0.1, "max_strength": 1.2}
+
+    # Créer le circuit de prise de décision
+    circuit = CircuitPriseDeDecision(memory_params, reinforcement_params, interneuron_params, feedback_params)
+
+    # Simuler des décisions sur plusieurs cycles
+    options = [1.2, 0.8, 1.5, 0.9]  # Valeurs représentant différentes options
+    previous_outcome = None  # On pourrait simuler un retour d'expérience ici
+
+    for cycle in range(10):
+        results = circuit.simuler_cycle(options, previous_outcome=previous_outcome)
+        print(f"Cycle {cycle + 1}: Option choisie = {results['chosen_option']}, Valeurs décisionnelles = {results['decision_values']}")
+        # Mise à jour du résultat précédent
+        previous_outcome = results['chosen_option']
+
+# Exécute la simulation
+simulate_decision_circuit()
