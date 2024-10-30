@@ -1,0 +1,27 @@
+class Degout(Emotion):
+    def __init__(self, intensity=1.0, duration=5):
+        """
+        Classe modélisant le dégoût, réduisant l'excitation et augmentant l'inhibition dans le circuit.
+
+        Parameters:
+        intensity (float): Intensité du dégoût, affectant la force de son impact.
+        duration (int): Durée du dégoût en cycles de simulation.
+        """
+        super().__init__(intensity, duration)
+
+    def apply_effects(self, circuit):
+        """
+        Diminue l'excitation des neurones et renforce l'inhibition pour simuler le dégoût.
+
+        Parameters:
+        circuit (object): Circuit neuronal influencé par le dégoût.
+        """
+        for neuron in circuit.neurons:
+            if isinstance(neuron, NeuroneDopaminergique):
+                neuron.threshold += self.intensity * 0.2  # Augmente le seuil, réduisant l'excitation
+
+        for synapse in circuit.synapses:
+            if isinstance(synapse, SynapseExcitatrice):
+                synapse.weight = max(synapse.weight - self.intensity * 0.2, 0.1)  # Réduit l'excitation
+            elif isinstance(synapse, SynapseInhibitrice):
+                synapse.weight = min(synapse.weight + self.intensity * 0.1, 1.0)  # Augmente l'inhibition
