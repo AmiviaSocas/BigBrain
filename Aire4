@@ -1,0 +1,68 @@
+from NeuroneMoteur import NeuroneMoteur
+from Synapse import Synapse
+from Interneurone import Interneurone
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire4:
+    def __init__(self, motor_neuron_params, synapse_params, interneuron_params, feedback_params):
+        """
+        Modélise l'aire 4 (aire motrice primaire), responsable de l'initiation des mouvements volontaires.
+
+        Parameters:
+        motor_neuron_params (dict): Paramètres pour les neurones moteurs.
+        synapse_params (dict): Paramètres pour les synapses.
+        interneuron_params (dict): Paramètres pour les interneurones.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_moteurs = [NeuroneMoteur(**motor_neuron_params) for _ in range(100)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(100)]
+        self.interneurones = [Interneurone(**interneuron_params) for _ in range(20)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def initier_mouvement(self, commande_motrice):
+        """
+        Simule l'initiation d'un mouvement par l'aire 4.
+
+        Parameters:
+        commande_motrice (float): Intensité de la commande motrice.
+        Returns:
+        dict: Réponses des neurones moteurs et ajustements de feedback.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_moteurs):
+            neurone.receive_input(commande_motrice)
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Modulation par les interneurones
+        for interneurone in self.interneurones:
+            interneurone.receive_input(sum(reponses) / len(reponses))
+            interneurone.activate()
+
+        # Ajustement de la réponse avec la boucle de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_moteurs": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 4
+def simulate_aire4():
+    # Paramètres ajustables pour l'aire 4
+    motor_neuron_params = {"threshold": 1.0, "response_strength": 0.9}
+    synapse_params = {"weight": 0.6, "neurotransmitter": "acetylcholine"}
+    interneuron_params = {"threshold": 0.8}
+    feedback_params = {"reinforcement_sensitivity": 0.2, "decay_factor": 0.1, "max_strength": 1.2}
+
+    aire4 = Aire4(motor_neuron_params, synapse_params, interneuron_params, feedback_params)
+
+    # Simuler des commandes motrices
+    commandes = [0.7, 1.2, 0.9, 0.5, 1.4]  # Liste des commandes motrices
+    for cycle, commande in enumerate(commandes):
+        resultats = aire4.initier_mouvement(commande)
+        print(f"Cycle {cycle + 1}: Commande motrice = {commande}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire4()
