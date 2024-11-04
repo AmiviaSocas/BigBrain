@@ -1,0 +1,44 @@
+from Aire1 import Aire1
+from Aire2 import Aire2
+from Aire3 import Aire3
+
+class CortexSomatosensoriel:
+    def __init__(self, aire1_params, aire2_params, aire3_params):
+        """
+        Modélise le cortex somatosensoriel en intégrant les aires 1, 2 et 3.
+
+        Parameters:
+        aire1_params (dict): Paramètres pour l'aire 1.
+        aire2_params (dict): Paramètres pour l'aire 2.
+        aire3_params (dict): Paramètres pour l'aire 3.
+        """
+        self.aire1 = Aire1(**aire1_params)
+        self.aire2 = Aire2(**aire2_params)
+        self.aire3 = Aire3(**aire3_params)
+
+    def traiter_stimulus(self, stimulus):
+        """
+        Simule le traitement d'un stimulus à travers les aires 1, 2 et 3.
+
+        Parameters:
+        stimulus (float): Intensité du stimulus reçu.
+        Returns:
+        dict: Réponses des aires 1, 2 et 3.
+        """
+        reponses_aire3 = self.aire3.recevoir_stimulus(stimulus)
+        reponses_aire1 = self.aire1.traiter_stimulus(sum(reponses_aire3) / len(reponses_aire3))
+        reponses_aire2 = self.aire2.integrer_stimulus(sum(reponses_aire1) / len(reponses_aire1))
+
+        return {
+            "reponses_aire3": reponses_aire3,
+            "reponses_aire1": reponses_aire1,
+            "reponses_aire2": reponses_aire2
+        }
+
+# Exemple d'appel
+cortex = CortexSomatosensoriel(aire1_params={"neurone_params": ..., "synapse_params": ...},
+                               aire2_params={"neurone_params": ..., "synapse_params": ...},
+                               aire3_params={"neurone_params": ..., "synapse_params": ...})
+
+resultats = cortex.traiter_stimulus(1.0)
+print(resultats)
