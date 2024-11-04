@@ -1,0 +1,31 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+
+class Aire3:
+    def __init__(self, neurone_params, synapse_params):
+        """
+        Modélise l'aire 3 du cortex somatosensoriel.
+
+        Parameters:
+        neurone_params (dict): Paramètres pour les neurones sensoriels.
+        synapse_params (dict): Paramètres pour les synapses.
+        """
+        self.neurones = [NeuroneSensoriel(**neurone_params) for _ in range(100)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(100)]
+
+    def recevoir_stimulus(self, stimulus):
+        """
+        Reçoit le stimulus initial dans l'aire 3.
+
+        Parameters:
+        stimulus (float): Intensité du stimulus reçu.
+        Returns:
+        list: Réponses des neurones.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones):
+            neurone.receive_input(stimulus)
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+        return reponses
