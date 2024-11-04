@@ -1,0 +1,55 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class CortexSomatosensoriel:
+    def __init__(self, neurone_params, synapse_params, feedback_params):
+        """
+        Modélise le cortex somatosensoriel, incluant les aires 1, 2, et 3 pour le traitement des informations tactiles.
+
+        Parameters:
+        neurone_params (dict): Paramètres pour les neurones sensoriels.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_sensoriels = [NeuroneSensoriel(**neurone_params) for _ in range(100)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(100)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def traiter_stimulus(self, stimulus):
+        """
+        Simule le traitement d'un stimulus tactile par le cortex somatosensoriel.
+
+        Parameters:
+        stimulus (float): Intensité du stimulus reçu.
+        Returns:
+        list: Réponses des neurones sensoriels après traitement du stimulus.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_sensoriels):
+            neurone.receive_input(stimulus)
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajuster le signal avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+        return reponses
+
+# Simulation du cortex somatosensoriel
+def simulate_cortex_somatosensoriel():
+    # Paramètres ajustables pour le cortex
+    neurone_params = {"sensitivity": 1.0, "threshold": 0.8}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.2, "decay_factor": 0.1, "max_strength": 1.2}
+
+    cortex = CortexSomatosensoriel(neurone_params, synapse_params, feedback_params)
+
+    # Simuler des stimuli tactiles
+    stimuli = [0.6, 1.0, 0.9, 0.5, 1.2]  # Liste de stimuli
+    for cycle, stimulus in enumerate(stimuli):
+        reponses = cortex.traiter_stimulus(stimulus)
+        print(f"Cycle {cycle + 1}: Stimulus = {stimulus}, Réponses des neurones = {reponses}")
+
+# Exécuter la simulation
+simulate_cortex_somatosensoriel()
