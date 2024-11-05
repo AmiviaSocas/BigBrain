@@ -1,0 +1,68 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from Interneurone import Interneurone
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire7:
+    def __init__(self, sensory_neuron_params, synapse_params, interneuron_params, feedback_params):
+        """
+        Modélise l'aire 7, impliquée dans la perception spatiale et la coordination des mouvements.
+
+        Parameters:
+        sensory_neuron_params (dict): Paramètres pour les neurones sensoriels.
+        synapse_params (dict): Paramètres pour les synapses.
+        interneuron_params (dict): Paramètres pour les interneurones.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_sensoriels = [NeuroneSensoriel(**sensory_neuron_params) for _ in range(130)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(130)]
+        self.interneurones = [Interneurone(**interneuron_params) for _ in range(35)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_coordination_spatiale(self, input_data):
+        """
+        Simule l'intégration des informations spatiales et la coordination dans l'aire 7.
+
+        Parameters:
+        input_data (float): Intensité des données sensorielles reçues.
+        Returns:
+        dict: Réponses des neurones sensoriels après intégration spatiale.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_sensoriels):
+            neurone.receive_input(input_data * 0.9)  # Modulation pour intégration avancée
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Modulation par les interneurones pour affiner la coordination
+        for interneurone in self.interneurones:
+            interneurone.receive_input(sum(reponses) / len(reponses))
+            interneurone.activate()
+
+        # Ajustement par le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_sensoriels": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 7
+def simulate_aire7():
+    # Paramètres ajustables pour l'aire 7
+    sensory_neuron_params = {"threshold": 1.0, "sensitivity": 0.85}
+    synapse_params = {"weight": 0.6, "neurotransmitter": "glutamate"}
+    interneuron_params = {"threshold": 0.75}
+    feedback_params = {"reinforcement_sensitivity": 0.2, "decay_factor": 0.1, "max_strength": 1.4}
+
+    aire7 = Aire7(sensory_neuron_params, synapse_params, interneuron_params, feedback_params)
+
+    # Simuler des données de coordination spatiale
+    data_inputs = [0.7, 1.0, 0.8, 0.9, 1.2]  # Liste des données spatiales
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire7.integrer_coordination_spatiale(data)
+        print(f"Cycle {cycle + 1}: Données spatiales = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire7()
