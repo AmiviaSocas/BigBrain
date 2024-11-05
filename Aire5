@@ -1,0 +1,68 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from Interneurone import Interneurone
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire5:
+    def __init__(self, sensory_neuron_params, synapse_params, interneuron_params, feedback_params):
+        """
+        Modélise l'aire 5, impliquée dans l'intégration des informations sensorielles et la perception spatiale.
+
+        Parameters:
+        sensory_neuron_params (dict): Paramètres pour les neurones sensoriels.
+        synapse_params (dict): Paramètres pour les synapses.
+        interneuron_params (dict): Paramètres pour les interneurones.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_sensoriels = [NeuroneSensoriel(**sensory_neuron_params) for _ in range(150)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(150)]
+        self.interneurones = [Interneurone(**interneuron_params) for _ in range(40)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_information_sensorielle(self, input_data):
+        """
+        Simule l'intégration des informations sensorielles dans l'aire 5.
+
+        Parameters:
+        input_data (float): Intensité des données sensorielles reçues.
+        Returns:
+        dict: Réponses des neurones sensoriels après intégration.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_sensoriels):
+            neurone.receive_input(input_data)
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Modulation par les interneurones
+        for interneurone in self.interneurones:
+            interneurone.receive_input(sum(reponses) / len(reponses))
+            interneurone.activate()
+
+        # Ajustement de l'intégration des données avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_sensoriels": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 5
+def simulate_aire5():
+    # Paramètres ajustables pour l'aire 5
+    sensory_neuron_params = {"threshold": 1.0, "sensitivity": 0.9}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    interneuron_params = {"threshold": 0.7}
+    feedback_params = {"reinforcement_sensitivity": 0.25, "decay_factor": 0.1, "max_strength": 1.3}
+
+    aire5 = Aire5(sensory_neuron_params, synapse_params, interneuron_params, feedback_params)
+
+    # Simuler des données sensorielles
+    data_inputs = [0.8, 1.1, 0.7, 0.9, 1.3]  # Liste des données sensorielles
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire5.integrer_information_sensorielle(data)
+        print(f"Cycle {cycle + 1}: Données sensorielles = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire5()
