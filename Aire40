@@ -1,0 +1,60 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire40:
+    def __init__(self, associative_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 40, impliquée dans le traitement de l'attention, la perception spatiale et l'intégration multisensorielle.
+
+        Parameters:
+        associative_neuron_params (dict): Paramètres pour les neurones associatifs.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_associatifs = [NeuroneSensoriel(**associative_neuron_params) for _ in range(160)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(160)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_informations_multisensorielles(self, input_data):
+        """
+        Simule l'intégration des informations spatiales et attentionnelles dans l'aire 40.
+
+        Parameters:
+        input_data (float): Intensité des données multisensorielles reçues.
+        Returns:
+        dict: Réponses des neurones associatifs après intégration des informations spatiales et attentionnelles.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_associatifs):
+            neurone.receive_input(input_data * 1.1)  # Modulation pour intégration multisensorielle
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_associatifs": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 40
+def simulate_aire40():
+    # Paramètres ajustables pour l'aire 40
+    associative_neuron_params = {"threshold": 1.0, "sensitivity": 0.85}
+    synapse_params = {"weight": 0.55, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.3, "decay_factor": 0.1, "max_strength": 1.5}
+
+    aire40 = Aire40(associative_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données multisensorielles
+    data_inputs = [1.0, 1.3, 0.9, 1.4, 1.2]  # Liste des données multisensorielles
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire40.integrer_informations_multisensorielles(data)
+        print(f"Cycle {cycle + 1}: Données multisensorielles = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire40()
+
