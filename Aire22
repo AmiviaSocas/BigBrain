@@ -1,0 +1,59 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire22:
+    def __init__(self, auditory_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 22, impliquée dans le traitement auditif et la compréhension du langage.
+
+        Parameters:
+        auditory_neuron_params (dict): Paramètres pour les neurones sensoriels auditifs.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_auditifs = [NeuroneSensoriel(**auditory_neuron_params) for _ in range(150)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(150)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def traiter_informations_auditives(self, input_data):
+        """
+        Simule le traitement des informations auditives et des sons de langage dans l'aire 22.
+
+        Parameters:
+        input_data (float): Intensité des données auditives reçues.
+        Returns:
+        dict: Réponses des neurones auditifs après traitement des sons et du langage.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_auditifs):
+            neurone.receive_input(input_data * 0.85)  # Modulation pour traitement linguistique
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_auditifs": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 22
+def simulate_aire22():
+    # Paramètres ajustables pour l'aire 22
+    auditory_neuron_params = {"threshold": 1.0, "sensitivity": 0.75}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.3, "decay_factor": 0.1, "max_strength": 1.4}
+
+    aire22 = Aire22(auditory_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données auditives
+    data_inputs = [0.8, 1.0, 0.7, 1.2, 0.9]  # Liste des données auditives et linguistiques
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire22.traiter_informations_auditives(data)
+        print(f"Cycle {cycle + 1}: Données auditives = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire22()
