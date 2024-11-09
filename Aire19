@@ -1,0 +1,59 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire19:
+    def __init__(self, visual_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 19, impliquée dans la reconnaissance des formes et la perception des mouvements complexes.
+
+        Parameters:
+        visual_neuron_params (dict): Paramètres pour les neurones sensoriels visuels.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_visuels = [NeuroneSensoriel(**visual_neuron_params) for _ in range(160)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(160)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def analyser_informations_visuelles_complexes(self, input_data):
+        """
+        Simule le traitement complexe des informations visuelles dans l'aire 19.
+
+        Parameters:
+        input_data (float): Intensité des données visuelles reçues.
+        Returns:
+        dict: Réponses des neurones visuels après analyse des formes et des mouvements complexes.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_visuels):
+            neurone.receive_input(input_data * 1.2)  # Modulation pour analyse avancée
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_visuels": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 19
+def simulate_aire19():
+    # Paramètres ajustables pour l'aire 19
+    visual_neuron_params = {"threshold": 1.0, "sensitivity": 0.8}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "GABA"}
+    feedback_params = {"reinforcement_sensitivity": 0.3, "decay_factor": 0.1, "max_strength": 1.6}
+
+    aire19 = Aire19(visual_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données visuelles avancées
+    data_inputs = [1.0, 1.2, 0.9, 1.4, 1.1]  # Liste des données visuelles complexes
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire19.analyser_informations_visuelles_complexes(data)
+        print(f"Cycle {cycle + 1}: Données visuelles (complexes) = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire19()
