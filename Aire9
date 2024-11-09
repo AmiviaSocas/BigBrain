@@ -1,0 +1,59 @@
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire9:
+    def __init__(self, executive_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 9, impliquée dans la prise de décision, la mémoire de travail, et les fonctions exécutives.
+
+        Parameters:
+        executive_neuron_params (dict): Paramètres pour les neurones exécutifs.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_executifs = [NeuroneMnésique(**executive_neuron_params) for _ in range(150)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(150)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def traiter_fonctions_executives(self, input_data):
+        """
+        Simule le traitement des informations de prise de décision et de mémoire de travail dans l'aire 9.
+
+        Parameters:
+        input_data (float): Intensité des données exécutives reçues.
+        Returns:
+        dict: Réponses des neurones exécutifs après traitement de la prise de décision.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_executifs):
+            neurone.receive_input(input_data * 1.15)  # Modulation pour fonction exécutive
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_executifs": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 9
+def simulate_aire9():
+    # Paramètres ajustables pour l'aire 9
+    executive_neuron_params = {"threshold": 1.0, "response_strength": 0.9}
+    synapse_params = {"weight": 0.6, "neurotransmitter": "dopamine"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.1, "max_strength": 1.5}
+
+    aire9 = Aire9(executive_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données exécutives
+    data_inputs = [1.1, 1.2, 0.9, 1.4, 1.0]  # Liste des données exécutives et de prise de décision
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire9.traiter_fonctions_executives(data)
+        print(f"Cycle {cycle + 1}: Données exécutives = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire9()
