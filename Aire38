@@ -1,0 +1,59 @@
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire38:
+    def __init__(self, emotional_memory_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 38, impliquée dans l'association sensorielle et la mémoire émotionnelle.
+
+        Parameters:
+        emotional_memory_neuron_params (dict): Paramètres pour les neurones de mémoire émotionnelle.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_memoire_emotionnelle = [NeuroneMnésique(**emotional_memory_neuron_params) for _ in range(160)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(160)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_informations_sensorielles_et_emotionnelles(self, input_data):
+        """
+        Simule l'intégration des informations sensorielles et émotionnelles dans l'aire 38.
+
+        Parameters:
+        input_data (float): Intensité des données sensorielles et émotionnelles.
+        Returns:
+        dict: Réponses des neurones de mémoire émotionnelle après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_memoire_emotionnelle):
+            neurone.receive_input(input_data * 1.3)  # Modulation pour la mémoire émotionnelle et sensorielle
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_memoire_emotionnelle": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 38
+def simulate_aire38():
+    # Paramètres ajustables pour l'aire 38
+    emotional_memory_neuron_params = {"threshold": 1.0, "sensitivity": 0.85}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.1, "max_strength": 1.6}
+
+    aire38 = Aire38(emotional_memory_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données sensorielles et émotionnelles
+    data_inputs = [1.0, 1.2, 0.9, 1.3, 1.1]  # Liste des données pour la mémoire émotionnelle et sensorielle
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire38.integrer_informations_sensorielles_et_emotionnelles(data)
+        print(f"Cycle {cycle + 1}: Données émotionnelles et sensorielles = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire38()
