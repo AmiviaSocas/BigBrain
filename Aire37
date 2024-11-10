@@ -1,0 +1,59 @@
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire37:
+    def __init__(self, visual_shape_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 37, impliquée dans la reconnaissance des formes et la mémoire visuelle.
+
+        Parameters:
+        visual_shape_neuron_params (dict): Paramètres pour les neurones de reconnaissance des formes visuelles.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_reconnaissance_formes = [NeuroneMnésique(**visual_shape_neuron_params) for _ in range(150)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(150)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_informations_visuelles_et_formes(self, input_data):
+        """
+        Simule l'intégration des informations visuelles et de reconnaissance des formes dans l'aire 37.
+
+        Parameters:
+        input_data (float): Intensité des données visuelles et de reconnaissance des formes.
+        Returns:
+        dict: Réponses des neurones de mémoire visuelle après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_reconnaissance_formes):
+            neurone.receive_input(input_data * 1.2)  # Modulation pour reconnaissance des formes et mémoire visuelle
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_reconnaissance_formes": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 37
+def simulate_aire37():
+    # Paramètres ajustables pour l'aire 37
+    visual_shape_neuron_params = {"threshold": 1.0, "sensitivity": 0.9}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.1, "max_strength": 1.6}
+
+    aire37 = Aire37(visual_shape_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données de reconnaissance visuelle et de formes
+    data_inputs = [1.1, 1.2, 0.9, 1.3, 1.0]  # Liste des données pour la mémoire visuelle et reconnaissance des formes
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire37.integrer_informations_visuelles_et_formes(data)
+        print(f"Cycle {cycle + 1}: Données visuelles = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire37()
