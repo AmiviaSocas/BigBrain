@@ -1,0 +1,60 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire34:
+    def __init__(self, olfactory_memory_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 34, impliquée dans le traitement olfactif et la mémoire sensorielle.
+
+        Parameters:
+        olfactory_memory_neuron_params (dict): Paramètres pour les neurones de mémoire olfactive.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_olfactifs = [NeuroneSensoriel(**olfactory_memory_neuron_params) for _ in range(140)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(140)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_informations_olfactives_et_memoire(self, input_data):
+        """
+        Simule l'intégration des informations olfactives et de mémoire dans l'aire 34.
+
+        Parameters:
+        input_data (float): Intensité des données olfactives.
+        Returns:
+        dict: Réponses des neurones de mémoire olfactive après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_olfactifs):
+            neurone.receive_input(input_data * 1.1)  # Modulation pour le traitement olfactif et mémoire
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_olfactifs": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 34
+def simulate_aire34():
+    # Paramètres ajustables pour l'aire 34
+    olfactory_memory_neuron_params = {"threshold": 1.0, "sensitivity": 0.8}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.35, "decay_factor": 0.1, "max_strength": 1.6}
+
+    aire34 = Aire34(olfactory_memory_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données olfactives
+    data_inputs = [1.2, 1.1, 0.9, 1.3, 1.0]  # Liste des données pour le traitement olfactif et la mémoire
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire34.integrer_informations_olfactives_et_memoire(data)
+        print(f"Cycle {cycle + 1}: Données olfactives = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire34()
+
