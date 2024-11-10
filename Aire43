@@ -1,0 +1,59 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire43:
+    def __init__(self, gustatory_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 43, impliquée dans la perception des saveurs et le traitement gustatif.
+
+        Parameters:
+        gustatory_neuron_params (dict): Paramètres pour les neurones de perception gustative.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_gustatifs = [NeuroneSensoriel(**gustatory_neuron_params) for _ in range(100)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(100)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_informations_gustatives(self, input_data):
+        """
+        Simule l'intégration des informations gustatives dans l'aire 43.
+
+        Parameters:
+        input_data (float): Intensité des données gustatives.
+        Returns:
+        dict: Réponses des neurones gustatifs après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_gustatifs):
+            neurone.receive_input(input_data * 1.1)  # Modulation pour la perception gustative
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_gustatifs": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 43
+def simulate_aire43():
+    # Paramètres ajustables pour l'aire 43
+    gustatory_neuron_params = {"threshold": 1.0, "sensitivity": 0.8}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.35, "decay_factor": 0.1, "max_strength": 1.5}
+
+    aire43 = Aire43(gustatory_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données gustatives
+    data_inputs = [1.1, 1.0, 0.9, 1.2, 1.1]  # Liste des données pour la perception gustative
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire43.integrer_informations_gustatives(data)
+        print(f"Cycle {cycle + 1}: Données gustatives = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire43()
