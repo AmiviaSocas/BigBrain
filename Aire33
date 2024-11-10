@@ -1,0 +1,59 @@
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire33:
+    def __init__(self, stress_response_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 33, impliquée dans la régulation émotionnelle et la réponse au stress.
+
+        Parameters:
+        stress_response_neuron_params (dict): Paramètres pour les neurones de réponse au stress.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_stress = [NeuroneMnésique(**stress_response_neuron_params) for _ in range(130)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(130)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def reguler_emotions_et_reponses_stress(self, input_data):
+        """
+        Simule la régulation émotionnelle et les réponses au stress dans l'aire 33.
+
+        Parameters:
+        input_data (float): Intensité des données de réponse émotionnelle et de stress.
+        Returns:
+        dict: Réponses des neurones de réponse au stress après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_stress):
+            neurone.receive_input(input_data * 1.15)  # Modulation pour la réponse au stress
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_stress": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 33
+def simulate_aire33():
+    # Paramètres ajustables pour l'aire 33
+    stress_response_neuron_params = {"threshold": 1.0, "sensitivity": 0.9}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "norépinéphrine"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.1, "max_strength": 1.7}
+
+    aire33 = Aire33(stress_response_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données pour la régulation émotionnelle et la réponse au stress
+    data_inputs = [1.0, 1.3, 0.8, 1.2, 1.1]  # Liste des données pour la réponse au stress
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire33.reguler_emotions_et_reponses_stress(data)
+        print(f"Cycle {cycle + 1}: Données de stress = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire33()
