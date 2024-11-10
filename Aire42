@@ -1,0 +1,59 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire42:
+    def __init__(self, advanced_auditory_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 42, impliquée dans l'analyse avancée des sons et le traitement auditif secondaire.
+
+        Parameters:
+        advanced_auditory_neuron_params (dict): Paramètres pour les neurones d'analyse auditive avancée.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_analyse_avancee = [NeuroneSensoriel(**advanced_auditory_neuron_params) for _ in range(170)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(170)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_analyse_avancee_auditive(self, input_data):
+        """
+        Simule l'intégration des informations auditives avancées dans l'aire 42.
+
+        Parameters:
+        input_data (float): Intensité des données auditives avancées.
+        Returns:
+        dict: Réponses des neurones d'analyse auditive après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_analyse_avancee):
+            neurone.receive_input(input_data * 1.2)  # Modulation pour l'analyse auditive avancée
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_analyse_avancee": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 42
+def simulate_aire42():
+    # Paramètres ajustables pour l'aire 42
+    advanced_auditory_neuron_params = {"threshold": 1.0, "sensitivity": 0.85}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.1, "max_strength": 1.6}
+
+    aire42 = Aire42(advanced_auditory_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données auditives avancées
+    data_inputs = [1.0, 1.3, 0.8, 1.2, 1.1]  # Liste des données pour l'analyse auditive avancée
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire42.integrer_analyse_avancee_auditive(data)
+        print(f"Cycle {cycle + 1}: Données auditives avancées = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire42()
