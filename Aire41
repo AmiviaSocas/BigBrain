@@ -1,0 +1,59 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire41:
+    def __init__(self, auditory_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 41, impliquée dans la perception des sons et le traitement auditif primaire.
+
+        Parameters:
+        auditory_neuron_params (dict): Paramètres pour les neurones de perception auditive.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_auditifs = [NeuroneSensoriel(**auditory_neuron_params) for _ in range(180)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(180)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_informations_auditives(self, input_data):
+        """
+        Simule l'intégration des informations auditives dans l'aire 41.
+
+        Parameters:
+        input_data (float): Intensité des données auditives.
+        Returns:
+        dict: Réponses des neurones auditifs après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_auditifs):
+            neurone.receive_input(input_data * 1.15)  # Modulation pour la perception auditive
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_auditifs": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 41
+def simulate_aire41():
+    # Paramètres ajustables pour l'aire 41
+    auditory_neuron_params = {"threshold": 1.0, "sensitivity": 0.8}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.1, "max_strength": 1.6}
+
+    aire41 = Aire41(auditory_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données auditives
+    data_inputs = [1.0, 1.2, 0.9, 1.3, 1.1]  # Liste des données pour la perception auditive
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire41.integrer_informations_auditives(data)
+        print(f"Cycle {cycle + 1}: Données auditives = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire41()
