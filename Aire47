@@ -1,0 +1,59 @@
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire47:
+    def __init__(self, social_emotional_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 47, impliquée dans le traitement des émotions complexes et des comportements sociaux.
+
+        Parameters:
+        social_emotional_neuron_params (dict): Paramètres pour les neurones de traitement émotionnel social.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_emotionnels_sociaux = [NeuroneMnésique(**social_emotional_neuron_params) for _ in range(160)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(160)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_informations_emotionnelles_et_sociales(self, input_data):
+        """
+        Simule l'intégration des informations émotionnelles et sociales dans l'aire 47.
+
+        Parameters:
+        input_data (float): Intensité des données émotionnelles et sociales.
+        Returns:
+        dict: Réponses des neurones émotionnels sociaux après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_emotionnels_sociaux):
+            neurone.receive_input(input_data * 1.3)  # Modulation pour traitement émotionnel et social
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_emotionnels_sociaux": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 47
+def simulate_aire47():
+    # Paramètres ajustables pour l'aire 47
+    social_emotional_neuron_params = {"threshold": 1.0, "sensitivity": 0.9}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.1, "max_strength": 1.6}
+
+    aire47 = Aire47(social_emotional_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données émotionnelles et sociales
+    data_inputs = [1.2, 1.1, 0.9, 1.3, 1.0]  # Liste des données pour le traitement émotionnel et social
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire47.integrer_informations_emotionnelles_et_sociales(data)
+        print(f"Cycle {cycle + 1}: Données émotionnelles et sociales = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire47()
