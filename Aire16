@@ -1,0 +1,71 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire16:
+    def __init__(self, integration_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 16, impliquée dans l'intégration sensorielle, émotionnelle et viscérale.
+
+        Parameters:
+        integration_neuron_params (dict): Paramètres pour les neurones d'intégration.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_integration = [NeuroneSensoriel(**integration_neuron_params) for _ in range(200)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(200)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_signaux_viscero_sensoriels(self, sensory_input, emotional_input, visceral_input):
+        """
+        Simule l'intégration des signaux sensoriels, émotionnels et viscéraux dans l'aire 16.
+
+        Parameters:
+        sensory_input (float): Intensité des données sensorielles.
+        emotional_input (float): Intensité des données émotionnelles.
+        visceral_input (float): Intensité des données viscérales.
+        Returns:
+        dict: Réponses des neurones après traitement.
+        """
+        combined_input = (
+            sensory_input * 0.4 +
+            emotional_input * 0.3 +
+            visceral_input * 0.3
+        )  # Pondération des signaux
+
+        reponses = []
+        for i, neurone in enumerate(self.neurones_integration):
+            neurone.receive_input(combined_input)
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+
+        return {
+            "reponses_neurones_integration": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 16
+def simulate_aire16():
+    # Paramètres ajustables pour l'aire 16
+    integration_neuron_params = {"threshold": 1.0, "sensitivity": 0.85}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.5, "decay_factor": 0.12, "max_strength": 1.8}
+
+    aire16 = Aire16(integration_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données sensoriels, émotionnels et viscéraux
+    sensory_inputs = [1.0, 1.1, 0.9, 1.2, 1.0]
+    emotional_inputs = [1.0, 0.8, 1.1, 1.2, 0.9]
+    visceral_inputs = [0.9, 1.2, 1.0, 1.1, 0.8]
+
+    for cycle, (sensory, emotional, visceral) in enumerate(zip(sensory_inputs, emotional_inputs, visceral_inputs)):
+        resultats = aire16.integrer_signaux_viscero_sensoriels(sensory, emotional, visceral)
+        print(f"Cycle {cycle + 1}: Sensoriel = {sensory}, Émotionnel = {emotional}, Viscéral = {visceral}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire16()
