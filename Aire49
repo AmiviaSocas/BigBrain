@@ -1,0 +1,71 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire49:
+    def __init__(self, multisensory_integration_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 49, impliquée dans l'intégration multisensorielle et les réponses cognitives.
+
+        Parameters:
+        multisensory_integration_params (dict): Paramètres pour les neurones d'intégration multisensorielle.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_multisensoriels = [NeuroneSensoriel(**multisensory_integration_params) for _ in range(180)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(180)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_signaux_multisensoriels(self, visual_input, auditory_input, tactile_input):
+        """
+        Simule l'intégration des signaux multisensoriels dans l'aire 49.
+
+        Parameters:
+        visual_input (float): Intensité des données visuelles.
+        auditory_input (float): Intensité des données auditives.
+        tactile_input (float): Intensité des données tactiles.
+        Returns:
+        dict: Réponses des neurones après traitement.
+        """
+        combined_input = (
+            visual_input * 0.4 +
+            auditory_input * 0.3 +
+            tactile_input * 0.3
+        )  # Pondération des signaux sensoriels
+
+        reponses = []
+        for i, neurone in enumerate(self.neurones_multisensoriels):
+            neurone.receive_input(combined_input)
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+
+        return {
+            "reponses_neurones_multisensoriels": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 49
+def simulate_aire49():
+    # Paramètres ajustables pour l'aire 49
+    multisensory_integration_params = {"threshold": 1.0, "sensitivity": 0.85}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.12, "max_strength": 1.8}
+
+    aire49 = Aire49(multisensory_integration_params, synapse_params, feedback_params)
+
+    # Simuler des données multisensorielles
+    visual_inputs = [1.0, 1.1, 0.9, 1.2, 1.0]
+    auditory_inputs = [0.9, 1.0, 1.1, 0.8, 1.2]
+    tactile_inputs = [1.1, 0.8, 1.2, 1.0, 0.9]
+
+    for cycle, (visual, auditory, tactile) in enumerate(zip(visual_inputs, auditory_inputs, tactile_inputs)):
+        resultats = aire49.integrer_signaux_multisensoriels(visual, auditory, tactile)
+        print(f"Cycle {cycle + 1}: Visuel = {visual}, Auditif = {auditory}, Tactile = {tactile}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire49()
