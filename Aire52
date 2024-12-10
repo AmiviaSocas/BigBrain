@@ -1,0 +1,64 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from NeuroneModulateur import NeuroneModulateur
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire52:
+    def __init__(self, auditory_integration_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 52, impliquée dans le traitement auditif et l'intégration multisensorielle.
+
+        Parameters:
+        auditory_integration_params (dict): Paramètres pour les neurones d'intégration auditive.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_auditifs = [NeuroneSensoriel(**auditory_integration_params) for _ in range(150)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(150)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_signaux_auditifs(self, auditory_input, linguistic_input):
+        """
+        Simule l'intégration des signaux auditifs et linguistiques dans l'aire 52.
+
+        Parameters:
+        auditory_input (float): Intensité des données auditives.
+        linguistic_input (float): Intensité des données linguistiques.
+        Returns:
+        dict: Réponses des neurones après traitement.
+        """
+        combined_input = auditory_input * 0.7 + linguistic_input * 0.3  # Pondération favorisant l'auditif
+        reponses = []
+        for i, neurone in enumerate(self.neurones_auditifs):
+            neurone.receive_input(combined_input)
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+
+        return {
+            "reponses_neurones_auditifs": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 52
+def simulate_aire52():
+    # Paramètres ajustables pour l'aire 52
+    auditory_integration_params = {"threshold": 1.0, "sensitivity": 0.9}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.4, "decay_factor": 0.1, "max_strength": 1.8}
+
+    aire52 = Aire52(auditory_integration_params, synapse_params, feedback_params)
+
+    # Simuler des données auditives et linguistiques
+    auditory_inputs = [1.2, 1.0, 1.3, 0.9, 1.1]
+    linguistic_inputs = [0.8, 1.1, 1.0, 1.2, 0.9]
+
+    for cycle, (auditory, linguistic) in enumerate(zip(auditory_inputs, linguistic_inputs)):
+        resultats = aire52.integrer_signaux_auditifs(auditory, linguistic)
+        print(f"Cycle {cycle + 1}: Auditif = {auditory}, Linguistique = {linguistic}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire52()
