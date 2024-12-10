@@ -1,0 +1,64 @@
+from NeuroneSensoriel import NeuroneSensoriel
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire15:
+    def __init__(self, sensory_emotional_integration_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 15, impliquée dans l'intégration sensorielle et la régulation émotionnelle.
+
+        Parameters:
+        sensory_emotional_integration_params (dict): Paramètres pour les neurones d'intégration sensorielle et émotionnelle.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_integration = [NeuroneSensoriel(**sensory_emotional_integration_params) for _ in range(120)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(120)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def integrer_signaux_sensoriels_et_emotionnels(self, sensory_input, emotional_input):
+        """
+        Simule l'intégration des signaux sensoriels et émotionnels dans l'aire 15.
+
+        Parameters:
+        sensory_input (float): Intensité des données sensorielles.
+        emotional_input (float): Intensité des données émotionnelles.
+        Returns:
+        dict: Réponses des neurones après traitement.
+        """
+        reponses = []
+        combined_input = sensory_input * 0.6 + emotional_input * 0.4  # Pondération des deux types de signaux
+        for i, neurone in enumerate(self.neurones_integration):
+            neurone.receive_input(combined_input)
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_integration": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 15
+def simulate_aire15():
+    # Paramètres ajustables pour l'aire 15
+    sensory_emotional_integration_params = {"threshold": 1.0, "sensitivity": 0.85}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.5, "decay_factor": 0.1, "max_strength": 1.7}
+
+    aire15 = Aire15(sensory_emotional_integration_params, synapse_params, feedback_params)
+
+    # Simuler des données sensorielles et émotionnelles
+    sensory_inputs = [1.0, 0.9, 1.2, 1.1, 1.3]
+    emotional_inputs = [0.8, 1.0, 1.1, 0.9, 1.2]
+
+    for cycle, (sensory, emotional) in enumerate(zip(sensory_inputs, emotional_inputs)):
+        resultats = aire15.integrer_signaux_sensoriels_et_emotionnels(sensory, emotional)
+        print(f"Cycle {cycle + 1}: Données sensorielles = {sensory}, Données émotionnelles = {emotional}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire15()
