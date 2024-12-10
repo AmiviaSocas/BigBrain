@@ -1,0 +1,59 @@
+from NeuroneMnésique import NeuroneMnésique
+from Synapse import Synapse
+from FeedbackCircuit import FeedbackCircuit
+
+class Aire14:
+    def __init__(self, social_emotional_regulation_neuron_params, synapse_params, feedback_params):
+        """
+        Modélise l'aire 14, impliquée dans la régulation des comportements émotionnels et sociaux.
+
+        Parameters:
+        social_emotional_regulation_neuron_params (dict): Paramètres pour les neurones de régulation sociale et émotionnelle.
+        synapse_params (dict): Paramètres pour les synapses.
+        feedback_params (dict): Paramètres pour le circuit de feedback.
+        """
+        self.neurones_regulation_emotionnelle = [NeuroneMnésique(**social_emotional_regulation_neuron_params) for _ in range(130)]
+        self.synapses = [Synapse(**synapse_params) for _ in range(130)]
+        self.feedback_circuit = FeedbackCircuit(**feedback_params)
+
+    def reguler_comportements_emotionnels_et_sociaux(self, input_data):
+        """
+        Simule la régulation des comportements émotionnels et sociaux dans l'aire 14.
+
+        Parameters:
+        input_data (float): Intensité des données émotionnelles et sociales.
+        Returns:
+        dict: Réponses des neurones après traitement.
+        """
+        reponses = []
+        for i, neurone in enumerate(self.neurones_regulation_emotionnelle):
+            neurone.receive_input(input_data * 1.1)  # Modulation pour la régulation émotionnelle et sociale
+            response = neurone.activate()
+            self.synapses[i].transmit(response)
+            reponses.append(response)
+
+        # Ajustement des réponses avec le circuit de feedback
+        self.feedback_circuit.apply_feedback(any(reponses))
+       
+        return {
+            "reponses_neurones_regulation_emotionnelle": reponses,
+            "adjustment_feedback": self.feedback_circuit.apply_feedback(True)
+        }
+
+# Simulation de l'aire 14
+def simulate_aire14():
+    # Paramètres ajustables pour l'aire 14
+    social_emotional_regulation_neuron_params = {"threshold": 1.0, "sensitivity": 0.85}
+    synapse_params = {"weight": 0.5, "neurotransmitter": "glutamate"}
+    feedback_params = {"reinforcement_sensitivity": 0.5, "decay_factor": 0.1, "max_strength": 1.8}
+
+    aire14 = Aire14(social_emotional_regulation_neuron_params, synapse_params, feedback_params)
+
+    # Simuler des données émotionnelles et sociales
+    data_inputs = [1.1, 1.2, 0.9, 1.3, 1.0]  # Liste des données pour la régulation sociale et émotionnelle
+    for cycle, data in enumerate(data_inputs):
+        resultats = aire14.reguler_comportements_emotionnels_et_sociaux(data)
+        print(f"Cycle {cycle + 1}: Données émotionnelles et sociales = {data}, Résultats = {resultats}")
+
+# Exécute la simulation
+simulate_aire14()
